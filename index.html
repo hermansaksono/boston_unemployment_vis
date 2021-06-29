@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/styles/main.css">
+    <link rel="icon" type="image/png" href="static/images/favicon-32x32.png">
+    <title>Workforce Map</title>
+</head>
+<body>
+    <header>
+        <h1>Boston Workforce Map</h1>
+        <select>
+            <option>Unemployment</option>
+            <option>Not participating in labor force</option>
+        </select>
+        <select>
+            <option>All genders</option>
+            <option>Women</option>
+            <option>Men</option>
+        </select>
+        <select>
+            <option>All racial and ethnic groups</option>
+            <option>White</option>
+            <option>Black</option>
+            <option>American Indian or Alaska Native</option>
+            <option>Asian</option>
+            <option>Native Hawaiians and other Pacific Islanders</option>
+            <option>Hispanic</option>
+        </select>
+    </header>
+    <main>
+        <div id="mapContainer">
+        </div>
+    </main>
+
+    <script type="text/javascript" src="static/scripts/boston_unemployment_vis.js"></script>
+</body>
+</html>

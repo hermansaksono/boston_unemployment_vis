@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+    font-family: "Work Sans", Arial, sans-serif;
+}
+
+select, option {
+    font-family: "Work Sans", Arial, sans-serif;
+    font-size: 1.25em;
+    padding: 0.25em;
+}
+
+.neighborhoodBorder {
+    stroke: #4589ff;
+    fill: #ffffff00;
+}
+
+.defaultTract {
+    stroke: #ffffff00;
+    fill: #ECEFF1;
+}
