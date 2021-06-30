@@ -10,10 +10,51 @@ select, option {
     padding: 0.25em;
 }
 
+.mapLegend {
+    height: 2em;
+    margin: 0.5em 0 0 0;
+}
+    .mapLegend .legendItem {
+        float: left;
+        margin: 0 1.5em 0 0;
+    }
+        .mapLegend .legendItem .legendBox {
+            height: 1em;
+            width: 1em;
+            margin: 0 0.25em 0 0;
+            float: left;
+            border: 1px solid #222222;
+        }
+
+        .colorLevel0 {
+            background-color: #DCE775;
+        }
+
+        .colorLevel1 {
+            background-color: #FFEB3B;
+        }
+
+        .colorLevel2 {
+            background-color: #FFB74D;
+        }
+
+        .colorLevel3 {
+            background-color: #FFCDD2;
+        }
+
+        .colorLevel4 {
+            background-color: #F48FB1;
+        }
+
+        .colorLevel5 {
+            background-color: #AB47BC;
+        }
+
 .svgMap {
     background-color: #ffffff;
 }
 
+/* SVG STYLES */
 .neighborhoodBorder {
     stroke: #4589ff;
     fill: #ffffff00;
@@ -22,4 +63,34 @@ select, option {
 .defaultTract {
     stroke: #ffffff00;
     fill: #ECEFF1;
+}
+
+.tractUnemploymentLevel0 {
+    stroke: #ffffff00;
+    fill: #DCE775;
+}
+
+.tractUnemploymentLevel1 {
+    stroke: #ffffff00;
+    fill: #FFEB3B;
+}
+
+.tractUnemploymentLevel2 {
+    stroke: #ffffff00;
+    fill: #FFB74D;
+}
+
+.tractUnemploymentLevel3 {
+    stroke: #ffffff00;
+    fill: #FFCDD2;
+}
+
+.tractUnemploymentLevel4 {
+    stroke: #ffffff00;
+    fill: #F48FB1;
+}
+
+.tractUnemploymentLevel5 {
+    stroke: #ffffff00;
+    fill: #AB47BC;
 }

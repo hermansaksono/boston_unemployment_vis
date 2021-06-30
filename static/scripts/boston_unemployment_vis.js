@@ -1,8 +1,8 @@
 const MAP_WIDTH = 1400;
-const MAP_HEIGHT = 640;
+const MAP_HEIGHT = 600;
 const EXCLUDED_TRACTS = ["25025990101"];
 const CITY_CENTER = [-71.0589, 42.3301];
-const INITIAL_SCALE = 150000;
+const INITIAL_SCALE = 145000;
 const DIV_ID_FOR_SVG_MAP = "div#mapContainer";
 
 let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
@@ -26,9 +26,16 @@ let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson")
 Promise.all([bostonNeighborhoodsData, bostonCensusTractsData]).then(function(values){
     drawCensusTracts(values[1]);
     drawNeighborhoods(values[0]);
+    loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json")
 });
 
 // Colorize map
+const loadWorkforceDataAndColorizeMap = (dataUri) => {
+    let workforceData = d3.json(dataUri);
+    Promise.all([workforceData]).then( (values) => {
+        colorizeWorkforceMap(values[0]);
+    });
+}
 
 // HELPER FUNCTIONS
 const drawCensusTracts = (tracts) => {
@@ -76,4 +83,35 @@ const drawNeighborhoodBorders = (neighborhoodFeature, svg) => {
 
 const getNeighborhoodName = (neighborhoodFeature) => {
     return neighborhoodFeature.properties.Name;
+}
+
+// COLORIZING MAP
+const colorizeWorkforceMap = (workforceData) => {
+    console.log(workforceData.data);
+    for (const key in workforceData.data ) {
+        colorizeTract(key, workforceData.data[key]);
+    }
+}
+
+const colorizeTract = (tractId, tractData) => {
+    if (tractId in cityTractShapes) {
+        let tractShape = cityTractShapes[tractId];
+        tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevel(tractData.unemployment_percent));
+    }
+}
+
+const getUnemploymentLevel = (unemploymentPercent) => {
+    if (unemploymentPercent <= 4.0) {
+        return 0;
+    } else if (unemploymentPercent <= 8.0) {
+        return 1;
+    } else if (unemploymentPercent <= 14.0) {
+        return 2;
+    } else if (unemploymentPercent <= 19.0) {
+        return 3;
+    } else if (unemploymentPercent <= 29.0) {
+        return 4;
+    } else {
+        return 5;
+    }
 }
