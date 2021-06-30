@@ -6,7 +6,13 @@ body {
 
 select, option {
     font-family: "Work Sans", Arial, sans-serif;
-    font-size: 1.25em;
+    font-size: 1.1em;
+    padding: 0.25em;
+}
+
+button {
+    font-family: "Work Sans", Arial, sans-serif;
+    font-size: 1.1em;
     padding: 0.25em;
 }
 
