@@ -1,7 +1,7 @@
 const MAP_WIDTH = 800;
-const MAP_HEIGHT = 600;
+const MAP_HEIGHT = 620;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101"];
-const CITY_CENTER = [-71.0189, 42.3301];
+const CITY_CENTER = [-71.0499, 42.3351];
 const INITIAL_SCALE = 145000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
