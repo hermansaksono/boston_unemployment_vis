@@ -92,12 +92,26 @@ const drawNeighborhoods = (neighborhoods) => {
 }
 
 const drawNeighborhoodBorders = (neighborhoodFeature, svg) => {
+    let neighborhoodName = getNeighborhoodName(neighborhoodFeature);
     let neighborhoodShape = svg.append("path");
     neighborhoodShape.data([neighborhoodFeature])
         .join('path')
         .attr('d', pathProjector)
         .attr('class', "neighborhoodBorder")
-    neighborhoodShapes[getNeighborhoodName(neighborhoodFeature)] = neighborhoodShape;
+
+    drawNeighborhoodName(neighborhoodName, neighborhoodShape, svg);
+    neighborhoodShapes[neighborhoodName] = neighborhoodShape;
+}
+
+const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, svg) => {
+    let neighborhoodBBox = neighborhoodShape.node().getBBox();
+    console.log(neighborhoodBBox.x);
+    svg.append("text")
+        .attr("x", neighborhoodBBox.x + neighborhoodBBox.width / 2)
+        .attr("y", neighborhoodBBox.y + neighborhoodBBox.height / 2)
+        .attr("text-anchor", "middle")
+        .attr("class", "neighborhoodName")
+        .text(neighborhoodName);
 }
 
 const getNeighborhoodName = (neighborhoodFeature) => {
@@ -150,6 +164,7 @@ const drawTractHovers = (tractFeature, svg) => {
     cityTractHoverShapes[getTractId(tractFeature)] = tractShape;
 }
 
+/* INFOBOX FUNCTIONS */
 const toggleInfoBox = (tractId) => {
     if (activeTractId == tractId) {
         hideInfoBox();
@@ -188,6 +203,7 @@ const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total
     d3.select("#infoBoxTractId").text(tractId);
 }
 
+/* TRACT HIGHLIGHTING FUNCTIONS */
 const setHighlightTractAsHover = (tractId) => {
     cityTractHoverShapes[tractId].classed("highlight", true);
 }
@@ -209,7 +225,7 @@ const trySetCurrentHighlightTractAsNotActive = () => {
         if (activeTractId != undefined) setHighlightTractAsNotActive(activeTractId);
 }
 
-// COLORIZING MAP
+/* COLORIZING MAP FUNCTIONS */
 const colorizeWorkforceMap = (workforceData) => {
     for (const key in workforceData.data ) {
         colorizeTract(key, workforceData.data[key]);

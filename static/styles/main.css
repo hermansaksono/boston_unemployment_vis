@@ -66,6 +66,7 @@ button {
 
 .mapLegend {
     height: 2em;
+    width: 200px;
     margin: -580px 0 0 0;
     clear: both;
     position: relative;
@@ -114,6 +115,10 @@ button {
 .neighborhoodBorder {
     stroke: #4589ff;
     fill: #ffffff00;
+}
+
+.neighborhoodName {
+    font-size: 0.5em;
 }
 
 .defaultTract {
