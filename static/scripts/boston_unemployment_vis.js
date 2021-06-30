@@ -44,6 +44,7 @@ const loadWorkforceDataAndColorizeMap = (dataUri) => {
         cityTractWorkforceData = values[0];
         colorizeWorkforceMap(values[0]);
         refreshInfoBox(activeTractId);
+        if (activeTractId != undefined) refreshInfoBox(activeTractId);
     });
 }
 
