@@ -186,10 +186,12 @@ const toggleInfoBox = (tractId) => {
     if (activeTractId == tractId) {
         hideInfoBox();
         setHighlightTractAsNotActive(tractId);
+        toggleGuideText();
         activeTractId = undefined;
     } else {
         trySetCurrentHighlightTractAsNotActive();
         refreshInfoBox(tractId);
+        toggleGuideText();
     }
 }
 
@@ -272,4 +274,13 @@ const getUnemploymentLevel = (unemploymentPercent) => {
     }
 }
 
-// ZOOM FUNCTIONS
+
+
+/* GUIDE TEXT FUNCTIONS */
+const toggleGuideText = () => {
+    if (activeTractId == undefined) {
+        d3.select("#mapGuideText").attr("class", "mapGuideText visible");
+    } else {
+        d3.select("#mapGuideText").attr("class", "mapGuideText hidden");
+    }
+}

@@ -58,7 +58,7 @@ main {
     .mapInfoBox table {
         margin: 10px;
         border-collapse: collapse;
-        width: 300px;
+        width: 330px;
     }
 
     .mapInfoBox table tr td {
@@ -67,7 +67,7 @@ main {
     }
 
     .mapInfoBox table tr.big {
-        font-size: 1.2em;
+        font-size: 1.3em;
         font-weight: bold;
     }
 
@@ -86,6 +86,27 @@ main {
         font-size: 0.5em;
         color: #999999;
         position: absolute;
+    }
+
+.mapGuideText {
+    width: 350px;
+    height: 50px;
+    margin: -50px 0px 0 600px;
+    position: relative;
+    z-index: 1;
+    font-size: 1.5em;
+    text-align: right;
+    color: #666666;
+}
+
+    .mapGuideText.visible {
+        opacity: 1;
+        transition: opacity 0.25s;
+    }
+
+    .mapGuideText.hidden {
+        opacity: 0;
+        transition: opacity 0.5s;
     }
 
 .mapLegend {
