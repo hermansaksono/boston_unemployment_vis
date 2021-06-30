@@ -10,9 +10,45 @@ select, option {
     padding: 0.25em;
 }
 
+.mapContainer {
+    width: 800px;
+    height: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+.mapInfoBox {
+    width: 300px;
+    margin: -175px 0 0 500px;
+    background-color: #ffffff44;
+    border: 1px solid #222222;
+    position: relative;
+    z-index: 1;
+}
+    .mapInfoBox table {
+        margin: 1em;
+    }
+
+    .mapInfoBox table tr.big {
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+
+    .mapInfoBox.visible {
+        opacity: 1;
+        transition: opacity 0.25s;
+    }
+
+    .mapInfoBox.hidden {
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
+
 .mapLegend {
     height: 2em;
-    margin: 0.5em 0 0 0;
+    margin: 1em 0 0 0;
+    clear: both;
 }
     .mapLegend .legendItem {
         float: left;
@@ -64,6 +100,16 @@ select, option {
     stroke: #ffffff00;
     fill: #ECEFF1;
 }
+
+.hoverTract {
+    stroke: #ffffff00;
+    fill: #ffffff00;
+}
+
+    .hoverTract.highlight {
+        stroke: #ffffff55;
+        fill: #ffffff88;
+    }
 
 .tractUnemploymentLevel0 {
     stroke: #ffffff00;
