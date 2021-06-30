@@ -64,7 +64,6 @@ button {
         transition: opacity 0.5s;
     }
 
-
 .mapLegend {
     height: 2em;
     margin: -580px 0 0 0;
@@ -125,10 +124,18 @@ button {
 .hoverTract {
     stroke: #ffffff00;
     fill: #ffffff00;
+    cursor: pointer;
 }
 
     .hoverTract.highlight {
         stroke: #ffffff55;
+        stroke-width: 1px;
+        fill: #ffffff88;
+    }
+
+    .hoverTract.active {
+        stroke: #00000099;
+        stroke-width: 2px;
         fill: #ffffff88;
     }
 

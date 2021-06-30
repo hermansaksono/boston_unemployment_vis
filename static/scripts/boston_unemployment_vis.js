@@ -12,6 +12,7 @@ let cityTractWorkforceData = {};
 let cityTractShapes = {};
 let cityTractHoverShapes = {};
 let neighborhoodShapes = {};
+let activeTractId = undefined;
 
 let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
 let svgMap = mapContainer.append("svg")
@@ -36,8 +37,13 @@ Promise.all([bostonNeighborhoodsData, bostonCensusTractsData]).then(function(val
 const loadWorkforceDataAndColorizeMap = (dataUri) => {
     let workforceData = d3.json(dataUri);
     Promise.all([workforceData]).then( (values) => {
+        /*
+        trySetCurrentHighlightTractAsNotActive();
+        hideInfoBox();
+         */
         cityTractWorkforceData = values[0];
         colorizeWorkforceMap(values[0]);
+        refreshInfoBox(activeTractId);
     });
 }
 
@@ -111,11 +117,13 @@ const drawCensusHovers = (tracts) => {
 const drawTractHovers = (tractFeature, svg) => {
     let tractShape = svg.append("path");
     let tractId = getTractId(tractFeature);
+
     tractShape.data([tractFeature])
         .join('path')
         .attr('d', pathProjector)
         .attr('class', "hoverTract")
         .attr("id", getTractId(tractFeature))
+        /*
         .on("mouseover", (d, i) => {
             let unemployment_percent = cityTractWorkforceData.data[d.properties.GEOID10].unemployment_percent;
             let margin_of_error = cityTractWorkforceData.data[d.properties.GEOID10].margin_of_error_percent;
@@ -129,7 +137,28 @@ const drawTractHovers = (tractFeature, svg) => {
             hideInfoBox();
             unHighlightTract(d.properties.GEOID10);
         });
+         */
+        .on("mouseover", (d, i) => {
+            setHighlightTractAsHover(d.properties.GEOID10);
+        })
+        .on("mouseout", (d, i) => {
+            setHighlightTractAsDefault(d.properties.GEOID10);
+        })
+        .on("click", () => {
+            toggleInfoBox(tractId);
+        })
     cityTractHoverShapes[getTractId(tractFeature)] = tractShape;
+}
+
+const toggleInfoBox = (tractId) => {
+    if (activeTractId == tractId) {
+        hideInfoBox();
+        setHighlightTractAsNotActive(tractId);
+        activeTractId = undefined;
+    } else {
+        trySetCurrentHighlightTractAsNotActive();
+        refreshInfoBox(tractId);
+    }
 }
 
 const showInfoBox = () => {
@@ -140,6 +169,17 @@ const hideInfoBox = () => {
     d3.select("#mapInfoBox").attr("class", "mapInfoBox hidden");
 };
 
+const refreshInfoBox = (tractId) => {
+    activeTractId = tractId;
+    let unemployment_percent = cityTractWorkforceData.data[tractId].unemployment_percent;
+    let margin_of_error = cityTractWorkforceData.data[tractId].margin_of_error_percent;
+    let num_samples = cityTractWorkforceData.data[tractId].unemployment_number;
+    let total_samples = cityTractWorkforceData.data[tractId].total_samples;
+    updateInfoBox(unemployment_percent, margin_of_error, num_samples, total_samples, tractId);
+    showInfoBox();
+    setHighlightTractAsActive(tractId);
+}
+
 const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total_samples, tractId) => {
     d3.select("#infoBoxUnemploymentPercent").text(unemployment_percent.toFixed(2) + "%");
     d3.select("#infoBoxMoePercent").text(margin_of_error.toFixed(2) + "%");
@@ -148,12 +188,25 @@ const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total
     d3.select("#infoBoxTractId").text(tractId);
 }
 
-const highlightTract = (tractId) => {
-    cityTractHoverShapes[tractId].attr("class", "hoverTract highlight");
+const setHighlightTractAsHover = (tractId) => {
+    cityTractHoverShapes[tractId].classed("highlight", true);
 }
 
-const unHighlightTract = (tractId) => {
-    cityTractHoverShapes[tractId].attr("class", "hoverTract");
+const setHighlightTractAsDefault = (tractId) => {
+    //cityTractHoverShapes[tractId].attr("class", "hoverTract");
+    cityTractHoverShapes[tractId].classed("highlight", false);
+}
+
+const setHighlightTractAsActive = (tractId) => {
+    cityTractHoverShapes[tractId].classed("active", true);
+}
+
+const setHighlightTractAsNotActive = (tractId) => {
+    cityTractHoverShapes[tractId].classed("active", false);
+}
+
+const trySetCurrentHighlightTractAsNotActive = () => {
+        if (activeTractId != undefined) setHighlightTractAsNotActive(activeTractId);
 }
 
 // COLORIZING MAP
