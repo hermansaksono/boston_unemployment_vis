@@ -1,9 +1,9 @@
 const MAP_WIDTH = 800;
-const MAP_HEIGHT = 620;
+const MAP_HEIGHT = 600;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101"];
 const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront"];
-const CITY_CENTER = [-71.0299, 42.3181];
-const INITIAL_SCALE = 120000;
+const CITY_CENTER = [-70.9, 42.27];
+const INITIAL_SCALE = 78000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
 let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
@@ -17,9 +17,9 @@ let activeTractId = undefined;
 
 let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
 let zoom = d3.zoom()
-    .scaleExtent([1, 5]) //.scale(projection.scale())
+    .scaleExtent([1, 20]) //.scale(projection.scale())
     .on("zoom", function () {
-            svgMap.attr("transform", d3.event.transform)
+        mapParentGroup.attr("transform", d3.event.transform);
     });
 
 let svgMap = mapContainer.append("svg")
@@ -28,6 +28,10 @@ let svgMap = mapContainer.append("svg")
     .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
     .call(zoom)
     .classed("svg-content", true);
+let mapParentGroup = svgMap.append("g");
+let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
+let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
+let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
 
 // Load data
 let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
@@ -76,7 +80,7 @@ const drawCensusTracts = (tracts) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the tract
         } else {
-            drawTract(tractFeature, svgMap);
+            drawTract(tractFeature, mapShapeGroup);
         }
     });
 }
@@ -101,28 +105,28 @@ const getTractIdName = (tractFeature) => {
 
 const drawNeighborhoods = (neighborhoods) => {
     neighborhoods.features.forEach((neighborhoodFeature) => {
-        drawNeighborhoodBorders(neighborhoodFeature, svgMap);
+        drawNeighborhoodBorders(neighborhoodFeature, mapShapeGroup, mapLabelGroup);
     });
 }
 
-const drawNeighborhoodBorders = (neighborhoodFeature, svg) => {
+const drawNeighborhoodBorders = (neighborhoodFeature, mapShapeGroup, mapLabelGroup) => {
     let neighborhoodName = getNeighborhoodName(neighborhoodFeature);
-    let neighborhoodShape = svg.append("path");
+    let neighborhoodShape = mapShapeGroup.append("path");
     neighborhoodShape.data([neighborhoodFeature])
         .join('path')
         .attr('d', pathProjector)
         .attr('class', "neighborhoodBorder")
 
-    drawNeighborhoodName(neighborhoodName, neighborhoodShape, svg);
+    drawNeighborhoodName(neighborhoodName, neighborhoodShape, mapLabelGroup);
     neighborhoodShapes[neighborhoodName] = neighborhoodShape;
 }
 
-const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, svg) => {
+const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {
     if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
         // Don't do anything
     } else {
         let neighborhoodBBox = neighborhoodShape.node().getBBox();
-        svg.append("text")
+        mapLabelGroup.append("text")
             .attr("x", neighborhoodBBox.x + neighborhoodBBox.width / 2)
             .attr("y", neighborhoodBBox.y + neighborhoodBBox.height / 2)
             .attr("text-anchor", "middle")
@@ -140,7 +144,7 @@ const drawCensusHovers = (tracts) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the census tract
         } else {
-            drawTractHovers(tractFeature, svgMap);
+            drawTractHovers(tractFeature, mapHoverGroup);
         }
     });
 }
