@@ -1,49 +1,79 @@
-const w = 1400;
-const h = 640;
-let mapContainer = d3.select("div#mapContainer");
-let svg = mapContainer.append("svg")
-    .attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#ffffff")
-    .attr("viewBox", "0 0 " + w + " " + h)
+const MAP_WIDTH = 1400;
+const MAP_HEIGHT = 640;
+const EXCLUDED_TRACTS = ["25025990101"];
+const CITY_CENTER = [-71.0589, 42.3301];
+const INITIAL_SCALE = 150000;
+const DIV_ID_FOR_SVG_MAP = "div#mapContainer";
+
+let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
+let pathProjector = d3.geoPath().projection(projection);
+
+let cityTractShapes = {};
+let neighborhoodShapes = {};
+
+let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
+let svgMap = mapContainer.append("svg")
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("class", "svgMap")
+    .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
     .classed("svg-content", true);
 
-let projection = d3.geoMercator().scale(150000).center([-71.0589, 42.3301]);
-let path = d3.geoPath().projection(projection);
-
 // Load data
-let bostonNeighborhoods = d3.json("static/maps/boston_neighborhoods.geojson");
-let bostonCensusTracts = d3.json("static/maps/boston_census_tracts.geojson");
-//var cities = d3.csv("cities.csv");
+let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
+let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
 
-// Draw maps
-Promise.all([bostonNeighborhoods, bostonCensusTracts]).then(function(values){
-    // Draw neighborhoods
-    drawCensusTracts(values[0], values[1]);
+// Draw map
+Promise.all([bostonNeighborhoodsData, bostonCensusTractsData]).then(function(values){
+    drawCensusTracts(values[1]);
+    drawNeighborhoods(values[0]);
 });
 
-const drawNeighborhoods = (geoJson) => {
-    svg.selectAll("path")
-        .data(geoJson.features)
-        .join('path')
-        .attr('d', path)
-        .style("stroke", "#4589ff")
-        .style("fill-opacity", "0");
+// Colorize map
+
+// HELPER FUNCTIONS
+const drawCensusTracts = (tracts) => {
+    tracts.features.forEach((tractFeature) => {
+        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
+            // Don't draw the tract
+        } else {
+            drawTract(tractFeature, svgMap);
+        }
+    });
 }
 
-const drawCensusTracts = (neighborhoods, tracts) => {
-
-    tracts.features.forEach((tract) => {
-        console.log(tract.properties.GEOID10);
-    });
-
-    svg.selectAll("path")
-        .data(tracts.features)
+const drawTract = (tractFeature, svg) => {
+    let tractShape = svg.append("path");
+    tractShape.data([tractFeature])
         .join('path')
-        .attr('d', path)
+        .attr('d', pathProjector)
         .attr('class', "defaultTract")
-        .enter()
-        .data(neighborhoods.features)
-        .join('path')
-        .attr('d', path)
-        .attr('class', "neighborhoodBorder");
+        .attr("id", getTractIdName(tractFeature));
+    cityTractShapes[getTractId(tractFeature)] = tractShape;
+}
 
+const getTractId = (tractFeature) => {
+    return tractFeature.properties.GEOID10;
+}
+
+const getTractIdName = (tractFeature) => {
+    return "tract" + getTractId(tractFeature);
+}
+
+const drawNeighborhoods = (neighborhoods) => {
+    neighborhoods.features.forEach((neighborhoodFeature) => {
+        drawNeighborhoodBorders(neighborhoodFeature, svgMap);
+    });
+}
+
+const drawNeighborhoodBorders = (neighborhoodFeature, svg) => {
+    let neighborhoodShape = svg.append("path");
+    neighborhoodShape.data([neighborhoodFeature])
+        .join('path')
+        .attr('d', pathProjector)
+        .attr('class', "neighborhoodBorder")
+    neighborhoodShapes[getNeighborhoodName(neighborhoodFeature)] = neighborhoodShape;
+}
+
+const getNeighborhoodName = (neighborhoodFeature) => {
+    return neighborhoodFeature.properties.Name;
 }

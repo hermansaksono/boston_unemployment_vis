@@ -10,6 +10,10 @@ select, option {
     padding: 0.25em;
 }
 
+.svgMap {
+    background-color: #ffffff;
+}
+
 .neighborhoodBorder {
     stroke: #4589ff;
     fill: #ffffff00;
