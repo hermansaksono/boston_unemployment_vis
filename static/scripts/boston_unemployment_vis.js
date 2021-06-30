@@ -1,6 +1,6 @@
 const MAP_WIDTH = 800;
 const MAP_HEIGHT = 600;
-const EXCLUDED_TRACTS = ["25025990101"];
+const EXCLUDED_TRACTS = ["25025990101", "25025980101"];
 const CITY_CENTER = [-71.0189, 42.3301];
 const INITIAL_SCALE = 145000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
@@ -101,6 +101,7 @@ const drawCensusHovers = (tracts) => {
 
 const drawTractHovers = (tractFeature, svg) => {
     let tractShape = svg.append("path");
+    let tractId = getTractId(tractFeature);
     tractShape.data([tractFeature])
         .join('path')
         .attr('d', pathProjector)
@@ -111,7 +112,7 @@ const drawTractHovers = (tractFeature, svg) => {
             let margin_of_error = cityTractWorkforceData.data[d.properties.GEOID10].margin_of_error_percent;
             let num_samples = cityTractWorkforceData.data[d.properties.GEOID10].unemployment_number;
             let total_samples = cityTractWorkforceData.data[d.properties.GEOID10].total_samples;
-            updateInfoBox(unemployment_percent, margin_of_error, num_samples, total_samples);
+            updateInfoBox(unemployment_percent, margin_of_error, num_samples, total_samples, tractId);
             showInfoBox();
             highlightTract(d.properties.GEOID10);
         })
@@ -130,11 +131,12 @@ const hideInfoBox = () => {
     d3.select("#mapInfoBox").attr("class", "mapInfoBox hidden");
 };
 
-const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total_samples) => {
+const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total_samples, tractId) => {
     d3.select("#infoBoxUnemploymentPercent").text(unemployment_percent.toFixed(2) + "%");
     d3.select("#infoBoxMoePercent").text(margin_of_error.toFixed(2) + "%");
     d3.select("#infoBoxNumberOfSamples").text(num_samples);
     d3.select("#infoBoxTotalSamples").text(total_samples);
+    d3.select("#infoBoxTractId").text(tractId);
 }
 
 const highlightTract = (tractId) => {

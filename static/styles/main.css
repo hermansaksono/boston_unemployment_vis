@@ -18,19 +18,20 @@ select, option {
 }
 
 .mapInfoBox {
-    width: 300px;
+    width: 350px;
     margin: -175px 0 0 500px;
     background-color: #ffffff44;
     border: 1px solid #222222;
     position: relative;
     z-index: 1;
+    font-size: 0.9em;
 }
     .mapInfoBox table {
         margin: 1em;
     }
 
     .mapInfoBox table tr.big {
-        font-size: 1.1em;
+        font-size: 1.2em;
         font-weight: bold;
     }
 
