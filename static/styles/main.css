@@ -90,12 +90,12 @@ main {
 
 .mapGuideText {
     width: 350px;
-    height: 50px;
-    margin: -50px 0px 0 600px;
+    height: 200px;
+    margin: -200px 0px 0 600px;
     position: relative;
     z-index: 1;
     font-size: 1.5em;
-    text-align: right;
+    text-align: center;
     color: #666666;
 }
 
@@ -112,7 +112,7 @@ main {
 .mapLegend {
     height: 2em;
     width: 200px;
-    margin: -600px 0 0 20px;
+    margin: -575px 0 0 20px;
     clear: both;
     position: relative;
     z-index: 1;

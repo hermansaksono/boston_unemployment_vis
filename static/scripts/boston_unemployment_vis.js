@@ -186,8 +186,8 @@ const toggleInfoBox = (tractId) => {
     if (activeTractId == tractId) {
         hideInfoBox();
         setHighlightTractAsNotActive(tractId);
-        toggleGuideText();
         activeTractId = undefined;
+        toggleGuideText();
     } else {
         trySetCurrentHighlightTractAsNotActive();
         refreshInfoBox(tractId);
