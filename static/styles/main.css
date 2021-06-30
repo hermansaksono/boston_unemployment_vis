@@ -13,8 +13,14 @@ select, option {
 button {
     font-family: "Work Sans", Arial, sans-serif;
     font-size: 1.1em;
+    font-weight: bold;
     padding: 0.25em;
 }
+
+    button.highlight {
+        background-color: #4589ff;
+        color: #ffffff;
+    }
 
 .mapContainer {
     width: 800px;
@@ -34,6 +40,13 @@ button {
 }
     .mapInfoBox table {
         margin: 1em;
+        border-collapse: collapse;
+        width: 300px;
+    }
+
+    .mapInfoBox table tr td {
+        border-bottom: 1px solid #dddddd;
+        padding: 0.25em;
     }
 
     .mapInfoBox table tr.big {

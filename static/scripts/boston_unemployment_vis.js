@@ -41,6 +41,15 @@ const loadWorkforceDataAndColorizeMap = (dataUri) => {
     });
 }
 
+// Events for the Refresh Button
+d3.select("#buttonRefreshView").on("click", (d, i) => {
+   let dataType = d3.select("#selectDataType").node().value;
+   let gender = d3.select("#selectGender").node().value;
+   let race = d3.select("#selectRacialGroup").node().value;
+   let pathString = `static/json/${dataType}-${gender}-${race}.json`;
+   loadWorkforceDataAndColorizeMap(pathString);
+});
+
 // HELPER FUNCTIONS
 const drawCensusTracts = (tracts) => {
     tracts.features.forEach((tractFeature) => {
@@ -149,7 +158,6 @@ const unHighlightTract = (tractId) => {
 
 // COLORIZING MAP
 const colorizeWorkforceMap = (workforceData) => {
-    console.log(workforceData.data);
     for (const key in workforceData.data ) {
         colorizeTract(key, workforceData.data[key]);
     }
