@@ -1,8 +1,9 @@
 const MAP_WIDTH = 800;
 const MAP_HEIGHT = 620;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101"];
-const CITY_CENTER = [-71.0499, 42.3351];
-const INITIAL_SCALE = 145000;
+const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront"];
+const CITY_CENTER = [-71.0299, 42.3181];
+const INITIAL_SCALE = 120000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
 let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
@@ -15,10 +16,17 @@ let neighborhoodShapes = {};
 let activeTractId = undefined;
 
 let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
+let zoom = d3.zoom()
+    .scaleExtent([1, 5]) //.scale(projection.scale())
+    .on("zoom", function () {
+            svgMap.attr("transform", d3.event.transform)
+    });
+
 let svgMap = mapContainer.append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
     .attr("class", "svgMap")
     .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
+    .call(zoom)
     .classed("svg-content", true);
 
 // Load data
@@ -43,18 +51,23 @@ const loadWorkforceDataAndColorizeMap = (dataUri) => {
          */
         cityTractWorkforceData = values[0];
         colorizeWorkforceMap(values[0]);
-        refreshInfoBox(activeTractId);
         if (activeTractId != undefined) refreshInfoBox(activeTractId);
     });
 }
 
-// Events for the Refresh Button
+// Events for the Refresh button
 d3.select("#buttonRefreshView").on("click", (d, i) => {
    let dataType = d3.select("#selectDataType").node().value;
    let gender = d3.select("#selectGender").node().value;
    let race = d3.select("#selectRacialGroup").node().value;
    let pathString = `static/json/${dataType}-${gender}-${race}.json`;
    loadWorkforceDataAndColorizeMap(pathString);
+});
+
+// Events for the Zoom buttons
+d3.select("#buttonZoomIn").on("click", (d, i) => {
+    console.log("Zoom in");
+    zoom();
 });
 
 // HELPER FUNCTIONS
@@ -105,14 +118,17 @@ const drawNeighborhoodBorders = (neighborhoodFeature, svg) => {
 }
 
 const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, svg) => {
-    let neighborhoodBBox = neighborhoodShape.node().getBBox();
-    console.log(neighborhoodBBox.x);
-    svg.append("text")
-        .attr("x", neighborhoodBBox.x + neighborhoodBBox.width / 2)
-        .attr("y", neighborhoodBBox.y + neighborhoodBBox.height / 2)
-        .attr("text-anchor", "middle")
-        .attr("class", "neighborhoodName")
-        .text(neighborhoodName);
+    if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
+        // Don't do anything
+    } else {
+        let neighborhoodBBox = neighborhoodShape.node().getBBox();
+        svg.append("text")
+            .attr("x", neighborhoodBBox.x + neighborhoodBBox.width / 2)
+            .attr("y", neighborhoodBBox.y + neighborhoodBBox.height / 2)
+            .attr("text-anchor", "middle")
+            .attr("class", "neighborhoodName")
+            .text(neighborhoodName);
+    }
 }
 
 const getNeighborhoodName = (neighborhoodFeature) => {
@@ -255,3 +271,5 @@ const getUnemploymentLevel = (unemploymentPercent) => {
         return 5;
     }
 }
+
+// ZOOM FUNCTIONS

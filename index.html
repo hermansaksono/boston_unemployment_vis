@@ -5,6 +5,7 @@
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <link rel="stylesheet" type="text/css" href="static/styles/main.css">
     <link rel="icon" type="image/png" href="static/images/favicon-32x32.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Workforce Map</title>
 </head>
 <body>
@@ -32,7 +33,11 @@
     </header>
     <main>
         <div id="mapContainer" class="mapContainer">
-            <div id="mapSvgContainer"></div>
+            <div id="mapSvgContainer" class="mapSvgContainer"></div>
+            <div id="mapZoomBox" class="mapZoomBox">
+                <button id="buttonZoomOut" class="zoomButton"><span class="material-icons">remove</span></button>
+                <button id="buttonZoomIn" class="zoomButton"><span class="material-icons">add</span></button>
+            </div>
             <div id="mapInfoBox" class="mapInfoBox hidden">
                 <table>
                     <tr class="big">

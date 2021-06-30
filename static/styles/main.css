@@ -22,17 +22,34 @@ button {
         color: #ffffff;
     }
 
+header {
+    z-index: 10;
+}
+
+main {
+    margin: 0 0 0 -20px;
+}
+
 .mapContainer {
-    width: 800px;
+    width: 950px;
     height: 600px;
+    margin: 0;
     position: relative;
     z-index: 1;
 }
 
+.mapSvgContainer {
+    width: 950px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+}
+
 .mapInfoBox {
     width: 350px;
-    margin: -175px 0 0 550px;
-    background-color: #ffffff44;
+    height: 200px;
+    margin: -200px 0 0 600px;
+    background-color: #ffffff99;
     border: 1px solid #222222;
     position: relative;
     z-index: 1;
@@ -67,7 +84,7 @@ button {
 .mapLegend {
     height: 2em;
     width: 200px;
-    margin: -580px 0 0 0;
+    margin: -600px 0 0 20px;
     clear: both;
     position: relative;
     z-index: 1;
@@ -106,6 +123,19 @@ button {
         .colorLevel5 {
             background-color: #AB47BC;
         }
+
+.mapZoomBox {
+    margin: -40px 0 0 20px;
+    clear: both;
+    position: relative;
+    z-index: 1;
+    display: none;
+}
+
+    .mapZoomBox button.zoomButton {
+        padding: 8px;
+        height: 44px;
+    }
 
 .svgMap {
     background-color: #ffffff;
