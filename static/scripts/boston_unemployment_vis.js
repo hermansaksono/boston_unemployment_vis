@@ -6,9 +6,6 @@ const CITY_CENTER = [-71.065, 42.365];
 const INITIAL_SCALE = 135000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
-let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
-let pathProjector = d3.geoPath().projection(projection);
-
 let cityTractWorkforceData = {};
 let cityTractShapes = {};
 let cityTractHoverShapes = {};
@@ -17,6 +14,10 @@ let activeTractId = undefined;
 
 /* INITIALIZATION */
 const initialize = () => {
+    // Set up the projection
+    let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
+    let pathProjector = d3.geoPath().projection(projection);
+
     // Initialize SVG
     let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
     let svgMap = mapContainer.append("svg")
@@ -39,10 +40,10 @@ const initialize = () => {
 
     // Draw map
     Promise.all(mapDataUriList).then(function(values){
-        drawCensusTracts(values[1], mapShapeGroup);
-        drawSurroundings([values[2], values[3]], mapShapeGroup);
-        drawNeighborhoods(values[0], mapShapeGroup, mapLabelGroup);
-        drawCensusHovers(values[1], mapHoverGroup);
+        drawCensusTracts(values[1], pathProjector, mapShapeGroup);
+        drawSurroundings([values[2], values[3]], pathProjector, mapShapeGroup);
+        drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
+        drawCensusHovers(values[1], pathProjector, mapHoverGroup);
         loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json");
     });
 
@@ -82,21 +83,21 @@ d3.select("#buttonZoomIn").on("click", (d, i) => {
 
 /* HELPER FUNCTIONS */
 /* DRAWING FUNCTIONS */
-const drawCensusTracts = (tracts, mapShapeGroup) => {
+const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
     tracts.features.forEach((tractFeature) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the tract
         } else {
-            drawTract(tractFeature, mapShapeGroup);
+            drawTract(tractFeature, projection, mapShapeGroup);
         }
     });
 }
 
-const drawTract = (tractFeature, svg) => {
+const drawTract = (tractFeature, projection, svg) => {
     let tractShape = svg.append("path");
     tractShape.data([tractFeature])
         .join('path')
-        .attr('d', pathProjector)
+        .attr('d', projection)
         .attr('class', "defaultTract")
         .attr("id", getTractId(tractFeature))
     cityTractShapes[getTractId(tractFeature)] = tractShape;
@@ -110,18 +111,18 @@ const getTractIdName = (tractFeature) => {
     return "tract" + getTractId(tractFeature);
 }
 
-const drawNeighborhoods = (neighborhoods, mapShapeGroup, mapLabelGroup) => {
+const drawNeighborhoods = (neighborhoods, projection, mapShapeGroup, mapLabelGroup) => {
     neighborhoods.features.forEach((neighborhoodFeature) => {
-        drawNeighborhoodBorders(neighborhoodFeature, mapShapeGroup, mapLabelGroup);
+        drawNeighborhoodBorders(neighborhoodFeature, projection, mapShapeGroup, mapLabelGroup);
     });
 }
 
-const drawNeighborhoodBorders = (neighborhoodFeature, mapShapeGroup, mapLabelGroup) => {
+const drawNeighborhoodBorders = (neighborhoodFeature, projection, mapShapeGroup, mapLabelGroup) => {
     let neighborhoodName = getNeighborhoodName(neighborhoodFeature);
     let neighborhoodShape = mapShapeGroup.append("path");
     neighborhoodShape.data([neighborhoodFeature])
         .join('path')
-        .attr('d', pathProjector)
+        .attr('d', projection)
         .attr('class', "neighborhoodBorder")
 
     drawNeighborhoodName(neighborhoodName, neighborhoodShape, mapLabelGroup);
@@ -142,23 +143,23 @@ const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup
     }
 }
 
-const drawSurroundings = (surroundingsDataList, mapShapeGroup) => {
+const drawSurroundings = (surroundingsDataList, projection, mapShapeGroup) => {
     surroundingsDataList.forEach((surroundingsData) => {
-        drawOneSurrounding(surroundingsData, mapShapeGroup);
+        drawOneSurrounding(surroundingsData, projection, mapShapeGroup);
     });
 }
 
-const drawOneSurrounding = (data, mapShapeGroup) => {
+const drawOneSurrounding = (data, projection, mapShapeGroup) => {
     data.features.forEach((feature) => {
-        drawSurroundingsBorders(feature, mapShapeGroup);
+        drawSurroundingsBorders(feature, projection, mapShapeGroup);
     });
 }
 
-const drawSurroundingsBorders = (feature, mapShapeGroup) => {
+const drawSurroundingsBorders = (feature, projection, mapShapeGroup) => {
     let neighborhoodShape = mapShapeGroup.append("path");
     neighborhoodShape.data([feature])
         .join('path')
-        .attr('d', pathProjector)
+        .attr('d', projection)
         .attr('class', "surroundingBorder")
 }
 
@@ -166,23 +167,23 @@ const getNeighborhoodName = (neighborhoodFeature) => {
     return neighborhoodFeature.properties.Name;
 }
 
-const drawCensusHovers = (tracts, mapHoverGroup) => {
+const drawCensusHovers = (tracts, projection, mapHoverGroup) => {
     tracts.features.forEach((tractFeature) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the census tract
         } else {
-            drawTractHovers(tractFeature, mapHoverGroup);
+            drawTractHovers(tractFeature, projection, mapHoverGroup);
         }
     });
 }
 
-const drawTractHovers = (tractFeature, svg) => {
+const drawTractHovers = (tractFeature, projection, svg) => {
     let tractShape = svg.append("path");
     let tractId = getTractId(tractFeature);
 
     tractShape.data([tractFeature])
         .join('path')
-        .attr('d', pathProjector)
+        .attr('d', projection)
         .attr('class', "hoverTract")
         .attr("id", getTractId(tractFeature))
         .on("mouseover", (d, i) => {
