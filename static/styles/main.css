@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 body {
+    width: 100%;
     font-family: "Work Sans", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 select, option {
@@ -23,22 +26,34 @@ button {
     }
 
 header {
+    width: 960px;
+    margin: 0;
+    padding: 20px 10px 10px 20px;
+    position: absolute;
+    top: 0;
     z-index: 10;
+    background: #ffffffaa;
 }
+
+    header h1 {
+        margin: 0.5em 0 0.25em 0;
+    }
 
 main {
-    margin: 0 -20px 0 -20px;
-}
-
-.mapContainer {
-    height: 600px;
-    margin: 0;
-    position: relative;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: absolute;
+    top: 0;
     z-index: 1;
 }
 
+.mapContainer {
+    width: 960px;
+    margin: 0 -20px 0 -20px;
+}
+
 .mapSvgContainer {
-    height: 600px;
+    height: 750px;
     position: relative;
     overflow: hidden;
 }
@@ -46,7 +61,7 @@ main {
 .mapInfoBox {
     width: 350px;
     height: 200px;
-    margin: -200px 0 0 600px;
+    margin: -220px 0 0 600px;
     background-color: #ffffff99;
     border: 1px solid #222222;
     position: relative;
@@ -108,12 +123,12 @@ main {
     }
 
 .mapLegend {
-    height: 2em;
     width: 200px;
-    margin: -575px 0 0 20px;
+    margin: -600px 0 0 20px;
     clear: both;
-    position: relative;
+    position: absolute;
     z-index: 1;
+    user-select: none;
 }
     .mapLegend .legendItem {
         margin: 0.25em 1.5em 0.25em 0;
