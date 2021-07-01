@@ -44,7 +44,7 @@ const initialize = () => {
         drawSurroundings([values[2], values[3]], pathProjector, mapShapeGroup);
         drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
         drawCensusHovers(values[1], pathProjector, mapHoverGroup);
-        loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json");
+        loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
     });
 
     // Initialize the Zoom event
