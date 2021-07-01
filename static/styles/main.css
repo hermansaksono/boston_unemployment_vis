@@ -144,27 +144,27 @@ main {
         }
 
         .colorLevel0 {
-            background-color: #DCE775;
+            background-color: #f9fbe7;
         }
 
         .colorLevel1 {
-            background-color: #FFEB3B;
+            background-color: #fff59d;
         }
 
         .colorLevel2 {
-            background-color: #FFB74D;
+            background-color: #ffb74d;
         }
 
         .colorLevel3 {
-            background-color: #FFCDD2;
+            background-color: #ef5350;
         }
 
         .colorLevel4 {
-            background-color: #F48FB1;
+            background-color: #d81b60;
         }
 
         .colorLevel5 {
-            background-color: #AB47BC;
+            background-color: #7b1fa2;
         }
 
 .mapZoomBox {
@@ -220,30 +220,30 @@ main {
 
 .tractUnemploymentLevel0 {
     stroke: #ffffff00;
-    fill: #DCE775;
+    fill: #f9fbe7;
 }
 
 .tractUnemploymentLevel1 {
     stroke: #ffffff00;
-    fill: #FFEB3B;
+    fill: #fff59d;
 }
 
 .tractUnemploymentLevel2 {
     stroke: #ffffff00;
-    fill: #FFB74D;
+    fill: #ffb74d;
 }
 
 .tractUnemploymentLevel3 {
     stroke: #ffffff00;
-    fill: #FFCDD2;
+    fill: #ef5350;
 }
 
 .tractUnemploymentLevel4 {
     stroke: #ffffff00;
-    fill: #F48FB1;
+    fill: #d81b60;
 }
 
 .tractUnemploymentLevel5 {
     stroke: #ffffff00;
-    fill: #AB47BC;
+    fill: #7b1fa2;
 }
