@@ -15,41 +15,50 @@ let cityTractHoverShapes = {};
 let neighborhoodShapes = {};
 let activeTractId = undefined;
 
-let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
-let zoom = d3.zoom()
-    .scaleExtent([1, 20]) //.scale(projection.scale())
-    .on("zoom", function () {
-        mapParentGroup.attr("transform", d3.event.transform);
+/* INITIALIZATION */
+const initialize = () => {
+    // Initialize SVG
+    let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
+    let svgMap = mapContainer.append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("class", "svgMap")
+        .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
+        .classed("svg-content", true);
+    let mapParentGroup = svgMap.append("g");
+    let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
+    let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
+    let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
+
+    // Load data
+    let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
+    let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
+    let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
+    let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
+    let mapDataUriList = [
+        bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
+
+    // Draw map
+    Promise.all(mapDataUriList).then(function(values){
+        drawCensusTracts(values[1], mapShapeGroup);
+        drawSurroundings([values[2], values[3]], mapShapeGroup);
+        drawNeighborhoods(values[0], mapShapeGroup, mapLabelGroup);
+        drawCensusHovers(values[1], mapHoverGroup);
+        loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json");
     });
 
-let svgMap = mapContainer.append("svg")
-    .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("class", "svgMap")
-    .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
-    .call(zoom)
-    .classed("svg-content", true);
-let mapParentGroup = svgMap.append("g");
-let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
-let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
-let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
+    // Initialize the Zoom event
+    let zoom = d3.zoom()
+        .scaleExtent([1, 20])
+        .on("zoom", function () {
+            mapParentGroup.attr("transform", d3.event.transform);
+        });
+    svgMap.call(zoom);
+}
 
-// Load data
-let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
-let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
-let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
-let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
-let mapDataUriList = [
-    bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
+/* NOW INITIALIZE THE VISUALIZATION */
+initialize();
 
-// Draw map
-Promise.all(mapDataUriList).then(function(values){
-    drawCensusTracts(values[1]);
-    drawSurroundings([values[2], values[3]]);
-    drawNeighborhoods(values[0]);
-    drawCensusHovers(values[1]);
-    loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json")
-});
-
+/* EVENT HANDLING */
 // Events for the Refresh button
 d3.select("#buttonRefreshView").on("click", (d, i) => {
    let dataType = d3.select("#selectDataType").node().value;
@@ -73,7 +82,7 @@ d3.select("#buttonZoomIn").on("click", (d, i) => {
 
 /* HELPER FUNCTIONS */
 /* DRAWING FUNCTIONS */
-const drawCensusTracts = (tracts) => {
+const drawCensusTracts = (tracts, mapShapeGroup) => {
     tracts.features.forEach((tractFeature) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the tract
@@ -101,7 +110,7 @@ const getTractIdName = (tractFeature) => {
     return "tract" + getTractId(tractFeature);
 }
 
-const drawNeighborhoods = (neighborhoods) => {
+const drawNeighborhoods = (neighborhoods, mapShapeGroup, mapLabelGroup) => {
     neighborhoods.features.forEach((neighborhoodFeature) => {
         drawNeighborhoodBorders(neighborhoodFeature, mapShapeGroup, mapLabelGroup);
     });
@@ -133,15 +142,13 @@ const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup
     }
 }
 
-const drawSurroundings = (surroundingsDataList) => {
-    console.log(surroundingsDataList);
+const drawSurroundings = (surroundingsDataList, mapShapeGroup) => {
     surroundingsDataList.forEach((surroundingsData) => {
-        drawOneSurrounding(surroundingsData);
+        drawOneSurrounding(surroundingsData, mapShapeGroup);
     });
 }
 
-const drawOneSurrounding = (data) => {
-    console.log(data);
+const drawOneSurrounding = (data, mapShapeGroup) => {
     data.features.forEach((feature) => {
         drawSurroundingsBorders(feature, mapShapeGroup);
     });
@@ -159,7 +166,7 @@ const getNeighborhoodName = (neighborhoodFeature) => {
     return neighborhoodFeature.properties.Name;
 }
 
-const drawCensusHovers = (tracts) => {
+const drawCensusHovers = (tracts, mapHoverGroup) => {
     tracts.features.forEach((tractFeature) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the census tract
