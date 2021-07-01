@@ -50,20 +50,6 @@ Promise.all(mapDataUriList).then(function(values){
     loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json")
 });
 
-// Colorize map
-const loadWorkforceDataAndColorizeMap = (dataUri) => {
-    let workforceData = d3.json(dataUri);
-    Promise.all([workforceData]).then( (values) => {
-        /*
-        trySetCurrentHighlightTractAsNotActive();
-        hideInfoBox();
-         */
-        cityTractWorkforceData = values[0];
-        colorizeWorkforceMap(values[0]);
-        if (activeTractId != undefined) refreshInfoBox(activeTractId);
-    });
-}
-
 // Events for the Refresh button
 d3.select("#buttonRefreshView").on("click", (d, i) => {
    let dataType = d3.select("#selectDataType").node().value;
@@ -85,7 +71,8 @@ d3.select("#buttonZoomIn").on("click", (d, i) => {
     zoom();
 });
 
-// HELPER FUNCTIONS
+/* HELPER FUNCTIONS */
+/* DRAWING FUNCTIONS */
 const drawCensusTracts = (tracts) => {
     tracts.features.forEach((tractFeature) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
@@ -146,14 +133,6 @@ const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup
     }
 }
 
-/*
-const drawSurroundings = (data) => {
-    data.features.forEach((feature) => {
-        drawSurroundingsBorders(feature, mapShapeGroup);
-    });
-}
- */
-
 const drawSurroundings = (surroundingsDataList) => {
     console.log(surroundingsDataList);
     surroundingsDataList.forEach((surroundingsData) => {
@@ -199,21 +178,6 @@ const drawTractHovers = (tractFeature, svg) => {
         .attr('d', pathProjector)
         .attr('class', "hoverTract")
         .attr("id", getTractId(tractFeature))
-        /*
-        .on("mouseover", (d, i) => {
-            let unemployment_percent = cityTractWorkforceData.data[d.properties.GEOID10].unemployment_percent;
-            let margin_of_error = cityTractWorkforceData.data[d.properties.GEOID10].margin_of_error_percent;
-            let num_samples = cityTractWorkforceData.data[d.properties.GEOID10].unemployment_number;
-            let total_samples = cityTractWorkforceData.data[d.properties.GEOID10].total_samples;
-            updateInfoBox(unemployment_percent, margin_of_error, num_samples, total_samples, tractId);
-            showInfoBox();
-            highlightTract(d.properties.GEOID10);
-        })
-        .on("mouseout", (d, i) => {
-            hideInfoBox();
-            unHighlightTract(d.properties.GEOID10);
-        });
-         */
         .on("mouseover", (d, i) => {
             setHighlightTractAsHover(d.properties.GEOID10);
         })
@@ -290,6 +254,19 @@ const trySetCurrentHighlightTractAsNotActive = () => {
 }
 
 /* COLORIZING MAP FUNCTIONS */
+const loadWorkforceDataAndColorizeMap = (dataUri) => {
+    let workforceData = d3.json(dataUri);
+    Promise.all([workforceData]).then( (values) => {
+        /*
+        trySetCurrentHighlightTractAsNotActive();
+        hideInfoBox();
+         */
+        cityTractWorkforceData = values[0];
+        colorizeWorkforceMap(values[0]);
+        if (activeTractId != undefined) refreshInfoBox(activeTractId);
+    });
+}
+
 const colorizeWorkforceMap = (workforceData) => {
     for (const key in workforceData.data ) {
         colorizeTract(key, workforceData.data[key]);
@@ -318,8 +295,6 @@ const getUnemploymentLevel = (unemploymentPercent) => {
         return 5;
     }
 }
-
-
 
 /* GUIDE TEXT FUNCTIONS */
 const toggleGuideText = () => {
