@@ -2,7 +2,7 @@ const MAP_WIDTH = 900;
 const MAP_HEIGHT = 700;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101"];
 const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront"];
-const CITY_CENTER = [-71.05, 42.365];
+const CITY_CENTER = [-71.065, 42.365];
 const INITIAL_SCALE = 135000;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 

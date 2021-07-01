@@ -124,11 +124,13 @@ main {
 
 .mapLegend {
     width: 200px;
+    padding: 10px;
     margin: -600px 0 0 20px;
     clear: both;
     position: absolute;
     z-index: 1;
     user-select: none;
+    background-color: #ffffff99;
 }
     .mapLegend .legendItem {
         margin: 0.25em 1.5em 0.25em 0;
