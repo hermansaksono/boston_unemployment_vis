@@ -71,6 +71,12 @@ d3.select("#buttonRefreshView").on("click", (d, i) => {
    let race = d3.select("#selectRacialGroup").node().value;
    let pathString = `static/json/${dataType}-${gender}-${race}.json`;
    loadWorkforceDataAndColorizeMap(pathString);
+   d3.select("#buttonRefreshView").node().disabled = true;
+});
+
+// Events for the Drop Down menu
+d3.selectAll("#selectDataType, #selectGender, #selectRacialGroup").on("change", () => {
+   d3.select("#buttonRefreshView").node().disabled = false;
 });
 
 // Events for the Zoom buttons
