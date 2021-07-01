@@ -189,6 +189,10 @@ main {
     stroke: #4589ff;
     fill: #ffffff00;
 }
+.surroundingBorder {
+    stroke: #aaaaaa;
+    fill: #ffffff00;
+}
 
 .neighborhoodName {
     font-size: 0.5em;

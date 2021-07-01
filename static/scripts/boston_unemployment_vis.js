@@ -36,10 +36,15 @@ let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
 // Load data
 let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
 let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
+let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
+let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
+let mapDataUriList = [
+    bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
 
 // Draw map
-Promise.all([bostonNeighborhoodsData, bostonCensusTractsData]).then(function(values){
+Promise.all(mapDataUriList).then(function(values){
     drawCensusTracts(values[1]);
+    drawSurroundings([values[2], values[3]]);
     drawNeighborhoods(values[0]);
     drawCensusHovers(values[1]);
     loadWorkforceDataAndColorizeMap("static/json/unemployment-all-all.json")
@@ -133,6 +138,36 @@ const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup
             .attr("class", "neighborhoodName")
             .text(neighborhoodName);
     }
+}
+
+/*
+const drawSurroundings = (data) => {
+    data.features.forEach((feature) => {
+        drawSurroundingsBorders(feature, mapShapeGroup);
+    });
+}
+ */
+
+const drawSurroundings = (surroundingsDataList) => {
+    console.log(surroundingsDataList);
+    surroundingsDataList.forEach((surroundingsData) => {
+        drawOneSurrounding(surroundingsData);
+    });
+}
+
+const drawOneSurrounding = (data) => {
+    console.log(data);
+    data.features.forEach((feature) => {
+        drawSurroundingsBorders(feature, mapShapeGroup);
+    });
+}
+
+const drawSurroundingsBorders = (feature, mapShapeGroup) => {
+    let neighborhoodShape = mapShapeGroup.append("path");
+    neighborhoodShape.data([feature])
+        .join('path')
+        .attr('d', pathProjector)
+        .attr('class', "surroundingBorder")
 }
 
 const getNeighborhoodName = (neighborhoodFeature) => {
