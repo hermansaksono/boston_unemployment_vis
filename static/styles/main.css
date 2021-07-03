@@ -26,7 +26,8 @@ button {
     }
 
 header {
-    width: 960px;
+    /*width: 960px;*/
+    width: 100%;
     margin: 0;
     padding: 20px 10px 10px 20px;
     position: absolute;
@@ -40,6 +41,7 @@ header {
     }
 
 main {
+    width: 100%;
     margin: 0 auto;
     padding: 0 20px;
     position: absolute;
@@ -48,7 +50,8 @@ main {
 }
 
 .mapContainer {
-    width: 960px;
+    /*width: 960px;*/
+    width: 100%;
     margin: 0 -20px 0 -20px;
 }
 
