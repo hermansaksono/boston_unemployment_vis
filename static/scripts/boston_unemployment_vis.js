@@ -4,6 +4,7 @@ const EXCLUDED_TRACTS = ["25025990101", "25025980101", "25025981501"];
 const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront"];
 const CITY_CENTER = [-71.065, 42.357];
 const INITIAL_SCALE = 140000;
+const LABEL_FONT_SIZE = 0.55;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
 let cityTractWorkforceData = {};
@@ -25,7 +26,7 @@ const initialize = () => {
         .attr("class", "svgMap")
         .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
         .classed("svg-content", true);
-    let mapParentGroup = svgMap.append("g");
+    let mapParentGroup = svgMap.append("g").attr("id", "mapParent");
     let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
     let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
     let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
@@ -48,11 +49,18 @@ const initialize = () => {
     });
 
     // Initialize the Zoom event
-    let zoom = d3.zoom()
+    const zoomMapSemantically = () => {
+        let scale = d3.event.transform.k;
+        mapShapeGroup.attr("transform", d3.event.transform);
+        mapLabelGroup.attr("transform", d3.event.transform);
+        mapHoverGroup.attr("transform", d3.event.transform);
+        mapLabelGroup.selectAll("text").style("font-size", computeNeighborhoodLabelZoomed(scale) + "em");
+    }
+
+    const zoom = d3.zoom()
         .scaleExtent([1, 20])
-        .on("zoom", function () {
-            mapParentGroup.attr("transform", d3.event.transform);
-        });
+        .on("zoom", zoomMapSemantically);
+
     svgMap.call(zoom);
 }
 
@@ -125,11 +133,11 @@ const drawNeighborhoodBorders = (neighborhoodFeature, projection, mapShapeGroup,
         .attr('d', projection)
         .attr('class', "neighborhoodBorder")
 
-    drawNeighborhoodName(neighborhoodName, neighborhoodShape, mapLabelGroup);
+    drawNeighborhoodLabel(neighborhoodName, neighborhoodShape, mapLabelGroup);
     neighborhoodShapes[neighborhoodName] = neighborhoodShape;
 }
 
-const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {
+const drawNeighborhoodLabel = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {
     if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
         // Don't do anything
     } else {
@@ -139,8 +147,15 @@ const drawNeighborhoodName = (neighborhoodName, neighborhoodShape, mapLabelGroup
             .attr("y", neighborhoodBBox.y + neighborhoodBBox.height / 2)
             .attr("text-anchor", "middle")
             .attr("class", "neighborhoodName")
+            .style("font-size", `${computeNeighborhoodLabelZoomed(1)}em`)
             .text(neighborhoodName);
     }
+}
+
+const computeNeighborhoodLabelZoomed = (scale) => {
+    let scaleAddition = scale - 1;
+    let scaledFontSize = LABEL_FONT_SIZE * Math.max(0.45, (1 - (scaleAddition / 3)));
+    return scaledFontSize;
 }
 
 const drawSurroundings = (surroundingsDataList, projection, mapShapeGroup) => {
