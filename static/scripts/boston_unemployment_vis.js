@@ -7,90 +7,95 @@ const INITIAL_SCALE = 94500;
 const LABEL_FONT_SIZE = 0.55;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
-let cityTractWorkforceData = {};
-let cityTractShapes = {};
-let cityTractHoverShapes = {};
-let neighborhoodShapes = {};
-let activeTractId = undefined;
+/*
+    WorkforceMap
+    This class handles the WorkforceMap, including loading the data asynchronously, draw the map and the colorization,
+    update the infobox, and the click events.
+ */
+let WorkforceMap = {
+    /* VARIABLES */
+    cityTractWorkforceData: {},
+    cityTractShapes: {},
+    cityTractHoverShapes: {},
+    neighborhoodShapes: {},
+    activeTractId: undefined,
 
-/* INITIALIZATION */
-const initialize = () => {
-    // Set up the projection
-    let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
-    let pathProjector = d3.geoPath().projection(projection);
+    /* INITIALIZATION */
+    initialize : () => {
+        // Set up the projection
+        let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
+        let pathProjector = d3.geoPath().projection(projection);
 
-    // Initialize SVG
-    let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
-    let svgMap = mapContainer.append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("class", "svgMap")
-        .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
-        .classed("svg-content", true);
-    let mapParentGroup = svgMap.append("g").attr("id", "mapParent");
-    let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
-    let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
-    let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
+        // Initialize SVG
+        let mapContainer = d3.select(DIV_ID_FOR_SVG_MAP);
+        let svgMap = mapContainer.append("svg")
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("class", "svgMap")
+            .attr("viewBox", "0 0 " + MAP_WIDTH + " " + MAP_HEIGHT)
+            .classed("svg-content", true);
+        let mapParentGroup = svgMap.append("g").attr("id", "mapParent");
+        let mapShapeGroup = mapParentGroup.append("g").attr("id", "mapShapeGroup");
+        let mapLabelGroup = mapParentGroup.append("g").attr("id", "mapLabelGroup");
+        let mapHoverGroup = mapParentGroup.append("g").attr("id", "mapHoverGroup");
 
-    // Load data
-    let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
-    let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
-    let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
-    let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
-    let mapDataUriList = [
-        bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
+        // Load data
+        let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
+        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
+        let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
+        let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
+        let mapDataUriList = [
+            bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
 
-    // Draw map
-    Promise.all(mapDataUriList).then(function(values){
-        drawCensusTracts(values[1], pathProjector, mapShapeGroup);
-        drawSurroundings([values[2], values[3]], pathProjector, mapShapeGroup);
-        drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
-        drawCensusHovers(values[1], pathProjector, mapHoverGroup);
-        loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
-    });
+        // Draw map
+        Promise.all(mapDataUriList).then(function (values) {
+            drawCensusTracts(values[1], pathProjector, mapShapeGroup);
+            drawSurroundings([values[2], values[3]], pathProjector, mapShapeGroup);
+            drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
+            drawCensusHovers(values[1], pathProjector, mapHoverGroup);
+            loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
+        });
 
-    // Initialize the Zoom event
-    const zoomMapSemantically = () => {
-        let scale = d3.event.transform.k;
-        mapShapeGroup.attr("transform", d3.event.transform);
-        mapLabelGroup.attr("transform", d3.event.transform);
-        mapHoverGroup.attr("transform", d3.event.transform);
-        mapLabelGroup.selectAll("text").style("font-size", computeNeighborhoodLabelZoomed(scale) + "em");
+        // Initialize the Zoom event
+        const zoomMapSemantically = () => {
+            let scale = d3.event.transform.k;
+            mapShapeGroup.attr("transform", d3.event.transform);
+            mapLabelGroup.attr("transform", d3.event.transform);
+            mapHoverGroup.attr("transform", d3.event.transform);
+            mapLabelGroup.selectAll("text").style("font-size", computeNeighborhoodLabelZoomed(scale) + "em");
+        }
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 20])
+            .on("zoom", zoomMapSemantically);
+
+        svgMap.call(zoom);
+
+        /* EVENT HANDLING */
+        // Event for the Refresh button
+        d3.select("#buttonRefreshView").on("click", (d, i) => {
+           let dataType = d3.select("#selectDataType").node().value;
+           let gender = d3.select("#selectGender").node().value;
+           let race = d3.select("#selectRacialGroup").node().value;
+           let pathString = `static/json/${dataType}-${gender}-${race}.json`;
+           loadWorkforceDataAndColorizeMap(pathString);
+           d3.select("#buttonRefreshView").node().disabled = true;
+        });
+
+        // Events for the Drop Down menu
+        d3.selectAll("#selectDataType, #selectGender, #selectRacialGroup").on("change", () => {
+           d3.select("#buttonRefreshView").node().disabled = false;
+        });
+
+        // Events for the Zoom buttons
+        d3.select("#buttonZoomIn").on("click", (d, i) => {
+            svgMap.transition().call(zoom.scaleBy, 2)
+        });
+
+        d3.select("#buttonZoomOut").on("click", (d, i) => {
+            svgMap.transition().call(zoom.scaleBy, 0.5)
+        });
     }
-
-    const zoom = d3.zoom()
-        .scaleExtent([1, 20])
-        .on("zoom", zoomMapSemantically);
-
-    svgMap.call(zoom);
-
-    // Events for the Zoom buttons
-    d3.select("#buttonZoomIn").on("click", (d, i) => {
-        svgMap.transition().call(zoom.scaleBy, 2)
-    });
-
-    d3.select("#buttonZoomOut").on("click", (d, i) => {
-        svgMap.transition().call(zoom.scaleBy, 0.5)
-    });
 }
-
-/* NOW INITIALIZE THE VISUALIZATION */
-initialize();
-
-/* EVENT HANDLING */
-// Events for the Refresh button
-d3.select("#buttonRefreshView").on("click", (d, i) => {
-   let dataType = d3.select("#selectDataType").node().value;
-   let gender = d3.select("#selectGender").node().value;
-   let race = d3.select("#selectRacialGroup").node().value;
-   let pathString = `static/json/${dataType}-${gender}-${race}.json`;
-   loadWorkforceDataAndColorizeMap(pathString);
-   d3.select("#buttonRefreshView").node().disabled = true;
-});
-
-// Events for the Drop Down menu
-d3.selectAll("#selectDataType, #selectGender, #selectRacialGroup").on("change", () => {
-   d3.select("#buttonRefreshView").node().disabled = false;
-});
 
 /* HELPER FUNCTIONS */
 /* DRAWING FUNCTIONS */
@@ -111,15 +116,11 @@ const drawTract = (tractFeature, projection, svg) => {
         .attr('d', projection)
         .attr('class', "defaultTract")
         .attr("id", getTractId(tractFeature))
-    cityTractShapes[getTractId(tractFeature)] = tractShape;
+    WorkforceMap.cityTractShapes[getTractId(tractFeature)] = tractShape;
 }
 
 const getTractId = (tractFeature) => {
     return tractFeature.properties.GEOID10;
-}
-
-const getTractIdName = (tractFeature) => {
-    return "tract" + getTractId(tractFeature);
 }
 
 const drawNeighborhoods = (neighborhoods, projection, mapShapeGroup, mapLabelGroup) => {
@@ -137,7 +138,7 @@ const drawNeighborhoodBorders = (neighborhoodFeature, projection, mapShapeGroup,
         .attr('class', "neighborhoodBorder")
 
     drawNeighborhoodLabel(neighborhoodName, neighborhoodShape, mapLabelGroup);
-    neighborhoodShapes[neighborhoodName] = neighborhoodShape;
+    WorkforceMap.neighborhoodShapes[neighborhoodName] = neighborhoodShape;
 }
 
 const drawNeighborhoodLabel = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {
@@ -213,15 +214,15 @@ const drawTractHovers = (tractFeature, projection, svg) => {
         .on("click", () => {
             toggleInfoBox(tractId);
         })
-    cityTractHoverShapes[getTractId(tractFeature)] = tractShape;
+    WorkforceMap.cityTractHoverShapes[getTractId(tractFeature)] = tractShape;
 }
 
 /* INFOBOX FUNCTIONS */
 const toggleInfoBox = (tractId) => {
-    if (activeTractId == tractId) {
+    if (WorkforceMap.activeTractId == tractId) {
         hideInfoBox();
         setHighlightTractAsNotActive(tractId);
-        activeTractId = undefined;
+        WorkforceMap.activeTractId = undefined;
         toggleGuideText();
     } else {
         trySetCurrentHighlightTractAsNotActive();
@@ -239,11 +240,11 @@ const hideInfoBox = () => {
 };
 
 const refreshInfoBox = (tractId) => {
-    activeTractId = tractId;
-    let unemployment_percent = cityTractWorkforceData.data[tractId].unemployment_percent;
-    let margin_of_error = cityTractWorkforceData.data[tractId].margin_of_error_percent;
-    let num_samples = cityTractWorkforceData.data[tractId].unemployment_number;
-    let total_samples = cityTractWorkforceData.data[tractId].total_samples;
+    WorkforceMap.activeTractId = tractId;
+    let unemployment_percent = WorkforceMap.cityTractWorkforceData.data[tractId].unemployment_percent;
+    let margin_of_error = WorkforceMap.cityTractWorkforceData.data[tractId].margin_of_error_percent;
+    let num_samples = WorkforceMap.cityTractWorkforceData.data[tractId].unemployment_number;
+    let total_samples = WorkforceMap.cityTractWorkforceData.data[tractId].total_samples;
     updateInfoBox(unemployment_percent, margin_of_error, num_samples, total_samples, tractId);
     showInfoBox();
     setHighlightTractAsActive(tractId);
@@ -259,37 +260,32 @@ const updateInfoBox = (unemployment_percent, margin_of_error, num_samples, total
 
 /* TRACT HIGHLIGHTING FUNCTIONS */
 const setHighlightTractAsHover = (tractId) => {
-    cityTractHoverShapes[tractId].classed("highlight", true);
+    WorkforceMap.cityTractHoverShapes[tractId].classed("highlight", true);
 }
 
 const setHighlightTractAsDefault = (tractId) => {
-    //cityTractHoverShapes[tractId].attr("class", "hoverTract");
-    cityTractHoverShapes[tractId].classed("highlight", false);
+    WorkforceMap.cityTractHoverShapes[tractId].classed("highlight", false);
 }
 
 const setHighlightTractAsActive = (tractId) => {
-    cityTractHoverShapes[tractId].classed("active", true);
+    WorkforceMap.cityTractHoverShapes[tractId].classed("active", true);
 }
 
 const setHighlightTractAsNotActive = (tractId) => {
-    cityTractHoverShapes[tractId].classed("active", false);
+    WorkforceMap.cityTractHoverShapes[tractId].classed("active", false);
 }
 
 const trySetCurrentHighlightTractAsNotActive = () => {
-        if (activeTractId != undefined) setHighlightTractAsNotActive(activeTractId);
+        if (WorkforceMap.activeTractId != undefined) setHighlightTractAsNotActive(WorkforceMap.activeTractId);
 }
 
 /* COLORIZING MAP FUNCTIONS */
 const loadWorkforceDataAndColorizeMap = (dataUri) => {
     let workforceData = d3.json(dataUri);
     Promise.all([workforceData]).then( (values) => {
-        /*
-        trySetCurrentHighlightTractAsNotActive();
-        hideInfoBox();
-         */
-        cityTractWorkforceData = values[0];
+        WorkforceMap.cityTractWorkforceData = values[0];
         colorizeWorkforceMap(values[0]);
-        if (activeTractId != undefined) refreshInfoBox(activeTractId);
+        if (WorkforceMap.activeTractId != undefined) refreshInfoBox(WorkforceMap.activeTractId);
     });
 }
 
@@ -300,8 +296,8 @@ const colorizeWorkforceMap = (workforceData) => {
 }
 
 const colorizeTract = (tractId, tractData) => {
-    if (tractId in cityTractShapes) {
-        let tractShape = cityTractShapes[tractId];
+    if (tractId in WorkforceMap.cityTractShapes) {
+        let tractShape = WorkforceMap.cityTractShapes[tractId];
         tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevel(tractData.unemployment_percent));
     }
 }
@@ -324,7 +320,7 @@ const getUnemploymentLevel = (unemploymentPercent) => {
 
 /* GUIDE TEXT FUNCTIONS */
 const toggleGuideText = () => {
-    if (activeTractId == undefined) {
+    if (WorkforceMap.activeTractId == undefined) {
         d3.select("#mapGuideText").attr("class", "mapGuideText visible");
     } else {
         d3.select("#mapGuideText").attr("class", "mapGuideText hidden");
