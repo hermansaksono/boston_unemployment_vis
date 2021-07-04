@@ -62,6 +62,15 @@ const initialize = () => {
         .on("zoom", zoomMapSemantically);
 
     svgMap.call(zoom);
+
+    // Events for the Zoom buttons
+    d3.select("#buttonZoomIn").on("click", (d, i) => {
+        svgMap.transition().call(zoom.scaleBy, 2)
+    });
+
+    d3.select("#buttonZoomOut").on("click", (d, i) => {
+        svgMap.transition().call(zoom.scaleBy, 0.5)
+    });
 }
 
 /* NOW INITIALIZE THE VISUALIZATION */
@@ -81,12 +90,6 @@ d3.select("#buttonRefreshView").on("click", (d, i) => {
 // Events for the Drop Down menu
 d3.selectAll("#selectDataType, #selectGender, #selectRacialGroup").on("change", () => {
    d3.select("#buttonRefreshView").node().disabled = false;
-});
-
-// Events for the Zoom buttons
-d3.select("#buttonZoomIn").on("click", (d, i) => {
-    console.log("Zoom in");
-    zoom();
 });
 
 /* HELPER FUNCTIONS */

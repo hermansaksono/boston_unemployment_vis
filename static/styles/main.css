@@ -171,15 +171,17 @@ main {
         }
 
 .mapZoomBox {
-    margin: -40px 0 0 20px;
+    margin: -40px 0 0px 0;
+    padding: 0 0 20px 20px;
     clear: both;
     position: relative;
     z-index: 1;
-    display: none;
+    /* display: none; */
 }
 
     .mapZoomBox button.zoomButton {
         padding: 8px;
+        width: 44px;
         height: 44px;
     }
 
@@ -277,16 +279,22 @@ main {
     main {
         position: relative;
         top: auto;
+        padding: 0;
+    }
+
+    .mapContainer {
+        width: 100%;
+        margin: 0;
     }
 
     .mapLegend {
         width: auto;
-        margin: 0;
+        margin: 0 0 0 10px;
         font-size: 1.7em;
     }
 
     .mapInfoBox {
-        width: 70%;
+        width: 65%;
         height: auto;
         margin: 0;
         float: right;
@@ -298,10 +306,24 @@ main {
         }
 
     .mapGuideText {
-        width: 100%;
-        height: auto;
-        margin: 1em 0;
-        text-align: center;
+        width: 60%;
+        height: 100px;
+        float: right;
+        text-align: left;
         font-size: 2em;
+        left: 35%;
+        margin: 20px 0 20px 0;
+        position: absolute;
     }
+
+    .mapZoomBox {
+        margin: -90px 0 0px 0;
+        position: absolute;
+    }
+
+        .mapZoomBox button.zoomButton {
+            padding: 8px;
+            width: 88px;
+            height: 88px;
+        }
 }
