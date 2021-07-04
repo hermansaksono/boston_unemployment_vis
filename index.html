@@ -14,34 +14,95 @@
 </head>
 <body>
     <header>
-        <h1>Boston Workforce Map</h1>
-        <select id="selectDataType">
-            <option value="unemployment">Unemployment</option>
-            <option value="not_in_labor_force" disabled="disabled">Not participating in labor force</option>
-        </select>
-        <select id="selectGender">
-            <option value="all">All genders</option>
-            <option value="women">Women</option>
-            <option value="men">Men</option>
-        </select>
-        <select id="selectRacialGroup">
-            <option value="all">All racial and ethnic groups</option>
-            <option value="white">White</option>
-            <option value="black" selected="selected">Black or African American</option>
-            <option disabled="disabled">American Indian or Alaska Native</option>
-            <option disabled="disabled">Asian</option>
-            <option disabled="disabled">Native Hawaiians and other Pacific Islanders</option>
-            <option value="latino">Latino or Hispanic</option>
-        </select>
-        <button id="buttonRefreshView">Refresh</button>
+        <section class="mapFilter">
+            <h1>Boston Workforce Map</h1>
+            <select id="selectDataType">
+                <option value="unemployment">Unemployment</option>
+                <option value="not_in_labor_force" disabled="disabled">Not participating in labor force</option>
+            </select>
+            <select id="selectGender">
+                <option value="all">All genders</option>
+                <option value="women">Women</option>
+                <option value="men">Men</option>
+            </select>
+            <select id="selectRacialGroup">
+                <option value="all">All racial and ethnic groups</option>
+                <option value="white">White</option>
+                <option value="black" selected="selected">Black or African American</option>
+                <option disabled="disabled">American Indian or Alaska Native</option>
+                <option disabled="disabled">Asian</option>
+                <option disabled="disabled">Native Hawaiians and other Pacific Islanders</option>
+                <option value="latino">Latino or Hispanic</option>
+            </select>
+            <button id="buttonRefreshView">Refresh</button>
+        </section>
     </header>
     <main>
         <div id="mapContainer" class="mapContainer">
-            <div id="mapSvgContainer" class="mapSvgContainer"></div>
-            <div id="mapZoomBox" class="mapZoomBox">
-                <button id="buttonZoomOut" class="zoomButton"><span class="material-icons">remove</span></button>
-                <button id="buttonZoomIn" class="zoomButton"><span class="material-icons">add</span></button>
+            <div class="mapOverlays">
+                <div id="mapZoomBox" class="mapZoomBox">
+                    <button id="buttonZoomIn" class="zoomButton zoomIn">
+                        <span class="material-icons">add</span>
+                    </button>
+                    <button id="buttonZoomOut" class="zoomButton zoomOut">
+                        <span class="material-icons">remove</span>
+                    </button>
+                </div>
             </div>
+            <div id="mapSvgContainer" class="mapSvgContainer"></div>
+            <div class="mapOverlays">
+                <div id="mapLegend2" class="mapLegend">
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel0"></div> Less than 4%
+                    </div>
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel1"></div> 5-8%
+                    </div>
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel2"></div> 9-14%
+                    </div>
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel3"></div> 15-19%
+                    </div>
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel4"></div> 20-29%
+                    </div>
+                    <div class="legendItem">
+                        <div class="legendBox colorLevel5"></div> More than 30%
+                    </div>
+                </div>
+                <div id="mapInfoBox" class="mapInfoBox hidden">
+                    <table>
+                        <tr class="big">
+                            <td>Unemployment level &nbsp;</td>
+                            <td id="infoBoxUnemploymentPercent"></td>
+                        </tr>
+                        <tr>
+                            <td>Margin of error</td>
+                            <td id="infoBoxMoePercent"></td>
+                        </tr>
+                        <tr>
+                            <td>Number of samples</td>
+                            <td id="infoBoxNumberOfSamples"></td>
+                        </tr>
+                        <tr>
+                            <td>Total samples</td>
+                            <td id="infoBoxTotalSamples"></td>
+                        </tr>
+                        <tr>
+                            <td>Census tract</td>
+                            <td id="infoBoxTractId"></td>
+                        </tr>
+                    </table>
+                    <div class="sourceCitation">Source: U.S. Census Bureau; American Community Survey, 2018</div>
+                </div>
+                <div id="mapGuideText" class="mapGuideText">
+                    <p>Click on the neighborhoods to see the workforce data.</p>
+                </div>
+            </div>
+
+
+            <!--
             <div id="mapGuideText" class="mapGuideText">
                 Click on the neighborhoods to see the workforce data.
             </div>
@@ -70,26 +131,7 @@
                 </table>
                 <div class="sourceCitation">Source: U.S. Census Bureau; American Community Survey, 2018</div>
             </div>
-            <div id="mapLegend" class="mapLegend">
-                <div class="legendItem">
-                    <div class="legendBox colorLevel0"></div> Less than 4%
-                </div>
-                <div class="legendItem">
-                    <div class="legendBox colorLevel1"></div> 5-8%
-                </div>
-                <div class="legendItem">
-                    <div class="legendBox colorLevel2"></div> 9-14%
-                </div>
-                <div class="legendItem">
-                    <div class="legendBox colorLevel3"></div> 15-19%
-                </div>
-                <div class="legendItem">
-                    <div class="legendBox colorLevel4"></div> 20-29%
-                </div>
-                <div class="legendItem">
-                    <div class="legendBox colorLevel5"></div> More than 30%
-                </div>
-            </div>
+            -->
         </div>
     </main>
         </div>

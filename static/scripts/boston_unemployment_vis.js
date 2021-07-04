@@ -1,9 +1,9 @@
-const MAP_WIDTH = 900;
-const MAP_HEIGHT = 700;
+const MAP_WIDTH = 1280;
+const MAP_HEIGHT = 1080;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101", "25025981501"];
 const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront", "West End"];
-const CITY_CENTER = [-70.970, 42.329];
-const INITIAL_SCALE = 94500;
+const CITY_CENTER = [-71.137140, 42.3563369];//[-70.970, 42.329];,
+const INITIAL_SCALE = 149000;
 const LABEL_FONT_SIZE = 0.55;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
@@ -43,13 +43,15 @@ let WorkforceMap = {
         let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
         let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
         let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
+        let countySubdivisions = d3.json("static/maps/ma_county_subdivisions.geojson");
         let mapDataUriList = [
-            bostonNeighborhoodsData, bostonCensusTractsData, cambridgeCensusTractsData, brooklineCensusTractsData];
+            bostonNeighborhoodsData, bostonCensusTractsData,
+            cambridgeCensusTractsData, brooklineCensusTractsData, countySubdivisions];
 
         // Draw map
-        Promise.all(mapDataUriList).then(function (values) {
+        Promise.all(mapDataUriList).then((values) => {
             drawCensusTracts(values[1], pathProjector, mapShapeGroup);
-            drawSurroundings([values[2], values[3]], pathProjector, mapShapeGroup);
+            drawSurroundings([values[4]], pathProjector, mapShapeGroup);
             drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
             drawCensusHovers(values[1], pathProjector, mapHoverGroup);
             loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
@@ -65,7 +67,7 @@ let WorkforceMap = {
         }
 
         const zoom = d3.zoom()
-            .scaleExtent([1, 20])
+            .scaleExtent([0.75, 20])
             .on("zoom", zoomMapSemantically);
 
         svgMap.call(zoom);
@@ -124,21 +126,24 @@ const getTractId = (tractFeature) => {
 }
 
 const drawNeighborhoods = (neighborhoods, projection, mapShapeGroup, mapLabelGroup) => {
+    let neighborhoodShapes = {};
     neighborhoods.features.forEach((neighborhoodFeature) => {
-        drawNeighborhoodBorders(neighborhoodFeature, projection, mapShapeGroup, mapLabelGroup);
+        let name = getNeighborhoodName(neighborhoodFeature);
+        let neighborhoodShape = drawNeighborhoodBorders(neighborhoodFeature, name, projection, mapShapeGroup);
+        drawNeighborhoodLabel(name, neighborhoodShape, mapLabelGroup);
+
+        neighborhoodShapes[name] = neighborhoodShape;
     });
+    WorkforceMap.neighborhoodShapes = neighborhoodShapes;
 }
 
-const drawNeighborhoodBorders = (neighborhoodFeature, projection, mapShapeGroup, mapLabelGroup) => {
-    let neighborhoodName = getNeighborhoodName(neighborhoodFeature);
+const drawNeighborhoodBorders = (neighborhoodFeature, neighborhoodName, projection, mapShapeGroup) => {
     let neighborhoodShape = mapShapeGroup.append("path");
     neighborhoodShape.data([neighborhoodFeature])
         .join('path')
         .attr('d', projection)
         .attr('class', "neighborhoodBorder")
-
-    drawNeighborhoodLabel(neighborhoodName, neighborhoodShape, mapLabelGroup);
-    WorkforceMap.neighborhoodShapes[neighborhoodName] = neighborhoodShape;
+    return neighborhoodShape;
 }
 
 const drawNeighborhoodLabel = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {

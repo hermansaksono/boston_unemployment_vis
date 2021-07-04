@@ -26,10 +26,10 @@ button {
     }
 
 header {
-    /*width: 960px;*/
     width: 100%;
+    height: 80px;
     margin: 0;
-    padding: 20px 10px 10px 20px;
+    padding: 20px 0px 10px 0px;
     position: absolute;
     top: 0;
     z-index: 10;
@@ -40,34 +40,89 @@ header {
         margin: 0.5em 0 0.25em 0;
     }
 
+    header section.mapFilter {
+        width: 960px;
+        margin: 0 auto;
+    }
+
 main {
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    position: absolute;
-    top: 0;
-    z-index: 1;
+    margin: 0 0;
 }
 
 .mapContainer {
-    /*width: 960px;*/
     width: 100%;
-    margin: 0 -20px 0 -20px;
+    height: 100%;
+    margin: 0;
 }
 
 .mapSvgContainer {
-    height: 750px;
-    position: relative;
+    height: 700px;
+    width: 100%;
     overflow: hidden;
+    margin: 0;
 }
+
+.mapOverlays {
+    width: 100%;
+    top: 0;
+    margin: 0;
+}
+
+.mapZoomBox {
+    width: 44px;
+    height: 88px;
+    margin: 120px 20px 20px 20px;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    float: right;
+}
+    .mapZoomBox button.zoomButton {
+        padding: 8px;
+        width: 44px;
+        height: 44px;
+        border: 1px solid #999999;
+    }
+
+    .mapZoomBox button:first-child.zoomButton {
+        border-bottom: 1px solid #eeeeee;
+        border-radius: 2px 2px 0 0;
+    }
+
+    .mapZoomBox button:last-child.zoomButton {
+        border-top: 1px solid #aaaaaa;
+        border-radius: 0 0 2px 2px;
+    }
+
+.mapLegend {
+    width: 200px;
+    margin: -200px 20px 0 20px;
+    padding: 10px;
+    position: absolute;
+    left: 0;
+    z-index: 10;
+    user-select: none;
+    background-color: #ffffff99;
+}
+    .mapLegend .legendItem {
+        margin: 0.25em 1.5em 0.25em 0;
+    }
+        .mapLegend .legendItem .legendBox {
+            height: 1em;
+            width: 1em;
+            margin: 0 0.25em 0 0;
+            float: left;
+            border: 1px solid #555;
+        }
 
 .mapInfoBox {
     width: 350px;
     height: 200px;
-    margin: -220px 0 0 600px;
-    background-color: #ffffff99;
+    position: absolute;
+    right: 0;
+    margin: -220px 20px 0px 0px;
+    background-color: #ffffffcc;
     border: 1px solid #222222;
-    position: relative;
     z-index: 1;
     font-size: 0.9em;
 }
@@ -105,15 +160,20 @@ main {
     }
 
 .mapGuideText {
-    width: 350px;
-    height: 200px;
-    margin: -200px 0px 0 600px;
-    position: relative;
+    width: 330px;
+    height: 150px;
+    margin: -200px 20px 40px 0px;
+    position: absolute;
+    right: 0;
     z-index: 1;
     font-size: 1.5em;
-    text-align: center;
     color: #666666;
+    background: #ffffffcc;
 }
+    .mapGuideText p {
+        margin: 0;
+        padding: 20px;
+    }
 
     .mapGuideText.visible {
         opacity: 1;
@@ -124,27 +184,6 @@ main {
         opacity: 0;
         transition: opacity 0.5s;
     }
-
-.mapLegend {
-    width: 200px;
-    padding: 10px;
-    margin: -600px 0 0 20px;
-    clear: both;
-    position: absolute;
-    z-index: 1;
-    user-select: none;
-    background-color: #ffffff99;
-}
-    .mapLegend .legendItem {
-        margin: 0.25em 1.5em 0.25em 0;
-    }
-        .mapLegend .legendItem .legendBox {
-            height: 1em;
-            width: 1em;
-            margin: 0 0.25em 0 0;
-            float: left;
-            border: 1px solid #555;
-        }
 
         .colorLevel0 {
             background-color: #f9fbe7;
@@ -170,21 +209,6 @@ main {
             background-color: #7b1fa2;
         }
 
-.mapZoomBox {
-    margin: -60px 0 0px 0;
-    padding: 0 0 20px 20px;
-    clear: both;
-    position: relative;
-    z-index: 1;
-    /* display: none; */
-}
-
-    .mapZoomBox button.zoomButton {
-        padding: 8px;
-        width: 44px;
-        height: 44px;
-    }
-
 .svgMap {
     background-color: #ffffff;
 }
@@ -194,8 +218,11 @@ main {
     stroke: #4589ff;
     fill: #ffffff00;
 }
+
 .surroundingBorder {
     stroke: #aaaaaa;
+    stroke-width: 0.5px;
+    stroke-linejoin: round;
     fill: #ffffff00;
 }
 
@@ -260,7 +287,7 @@ main {
 }
 
 /* MOBILE VIEW */
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 960px) {
     h1 {
         font-size: 3em;
     }
