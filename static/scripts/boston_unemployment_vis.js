@@ -48,6 +48,10 @@ let WorkforceMap = {
             bostonNeighborhoodsData, bostonCensusTractsData,
             cambridgeCensusTractsData, brooklineCensusTractsData, countySubdivisions];
 
+        // Adjust mapContainerHeight
+        let documentHeight = window.innerHeight;
+        mapContainer.style("height", `${documentHeight}px`);
+
         // Draw map
         Promise.all(mapDataUriList).then((values) => {
             drawCensusTracts(values[1], pathProjector, mapShapeGroup);
