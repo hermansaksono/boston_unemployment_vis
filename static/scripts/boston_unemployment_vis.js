@@ -2,8 +2,8 @@ const MAP_WIDTH = 1280;
 const MAP_HEIGHT = 1080;
 const EXCLUDED_TRACTS = ["25025990101", "25025980101", "25025981501"];
 const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront", "West End"];
-const CITY_CENTER = [-71.137140, 42.3563369];//[-70.970, 42.329];,
-const INITIAL_SCALE = 149000;
+const CITY_CENTER = [-71.137140, 42.3613369];//[-70.970, 42.329];,
+const INITIAL_SCALE = 150000;
 const LABEL_FONT_SIZE = 0.55;
 const DIV_ID_FOR_SVG_MAP = "div#mapSvgContainer";
 
@@ -22,6 +22,10 @@ let WorkforceMap = {
 
     /* INITIALIZATION */
     initialize : () => {
+        // Get document information
+        let documentHeight = window.innerHeight;
+        console.log(documentHeight);
+
         // Set up the projection
         let projection = d3.geoMercator().scale(INITIAL_SCALE).center(CITY_CENTER);
         let pathProjector = d3.geoPath().projection(projection);
@@ -49,7 +53,6 @@ let WorkforceMap = {
             cambridgeCensusTractsData, brooklineCensusTractsData, countySubdivisions];
 
         // Adjust mapContainerHeight
-        let documentHeight = window.innerHeight;
         mapContainer.style("height", `${documentHeight}px`);
 
         // Draw map
