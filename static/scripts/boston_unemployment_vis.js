@@ -63,7 +63,7 @@ let WorkforceMap = {
             loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
         });
 
-        // Initialize the Zoom event
+        /* ZOOM HANDLING */
         const zoomMapSemantically = () => {
             let scale = d3.event.transform.k;
             mapShapeGroup.attr("transform", d3.event.transform);
@@ -287,7 +287,7 @@ const setHighlightTractAsNotActive = (tractId) => {
 }
 
 const trySetCurrentHighlightTractAsNotActive = () => {
-        if (WorkforceMap.activeTractId != undefined) setHighlightTractAsNotActive(WorkforceMap.activeTractId);
+    if (WorkforceMap.activeTractId != undefined) setHighlightTractAsNotActive(WorkforceMap.activeTractId);
 }
 
 /* COLORIZING MAP FUNCTIONS */
