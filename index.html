@@ -102,11 +102,11 @@
             </div>
         </div>
     </main>
-        </div>
 
-    <script type="text/javascript" src="static/scripts/boston_unemployment_vis.js"></script>
+    <script type="text/javascript" src="static/scripts/workforce_map.js"></script>
     <script type="text/javascript">
-        WorkforceMap.initialize()
+        let workforceMap = new WorkforceMap("div#mapSvgContainer");
+        workforceMap.initialize();
     </script>
 </body>
 </html>
