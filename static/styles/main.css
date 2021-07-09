@@ -236,6 +236,11 @@ main {
     fill: #ffffff00;
 }
 
+    .neighborhoodBorder.excluded {
+        stroke: #aaaaaa;
+        fill: #ffffff;
+    }
+
 .surroundingBorder {
     stroke: #aaaaaa;
     stroke-width: 0.5px;

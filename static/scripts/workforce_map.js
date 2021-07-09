@@ -2,7 +2,8 @@ const MAP_WIDTH = 1280;
 const MAP_HEIGHT = 1080;
 const UNEMPLOYMENT_LEVEL_CATEGORIES = [4, 8, 14, 19, 29];
 const EXCLUDED_TRACTS = ["25025990101", "25025980101", "25025981501"];
-const EXCLUDED_NEIGHBORHOODS = ["Bay Village", "Leather District", "Chinatown", "Waterfront", "West End"];
+const EXCLUDED_NEIGHBORHOODS = ["Harbor Islands"];
+const EXCLUDED_NEIGHBORHOOD_LABELS = ["Bay Village", "Leather District", "Chinatown", "Waterfront", "West End"];
 const CITY_CENTER = [-71.137140, 42.3513369];
 const INITIAL_SCALE = 150000;
 const LABEL_FONT_SIZE = 0.55;
@@ -255,12 +256,17 @@ const drawNeighborhoodBorders = (neighborhoodFeature, neighborhoodName, projecti
     neighborhoodShape.data([neighborhoodFeature])
         .join('path')
         .attr('d', projection)
-        .attr('class', "neighborhoodBorder")
+
+    if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName))
+        neighborhoodShape.attr("class", "neighborhoodBorder excluded");
+    else
+        neighborhoodShape.attr("class", "neighborhoodBorder");
+
     return neighborhoodShape;
 }
 
 const drawNeighborhoodLabel = (neighborhoodName, neighborhoodShape, mapLabelGroup) => {
-    if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
+    if (EXCLUDED_NEIGHBORHOOD_LABELS.includes(neighborhoodName)) {
         // Don't do anything
     } else {
         let neighborhoodBBox = neighborhoodShape.node().getBBox();
