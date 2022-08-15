@@ -307,6 +307,10 @@ main {
     stroke: #ffffff00;
     fill: #7b1fa2;
 }
+.tractUnemploymentLevelUnknown {
+    stroke: #ffffff00;
+    fill: #aaaaaa;
+}
 
 /* MOBILE VIEW */
 @media only screen and (max-device-width:960px) {
