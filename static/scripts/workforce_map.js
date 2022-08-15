@@ -135,6 +135,7 @@ class WorkforceMap {
     };
 
     refreshInfoBoxData = (tractId) => {
+        /*
         let unemployment_percent = this.cityTractWorkforceData.data[tractId].unemployment_percent;
         let margin_of_error = this.cityTractWorkforceData.data[tractId].margin_of_error_percent;
         let num_samples = this.cityTractWorkforceData.data[tractId].unemployment_number;
@@ -145,6 +146,26 @@ class WorkforceMap {
         d3.select("#infoBoxNumberOfSamples").text(num_samples);
         d3.select("#infoBoxTotalSamples").text(total_samples);
         d3.select("#infoBoxTractId").text(tractId);
+         */
+        let tract_data = this.cityTractWorkforceData.data[tractId];
+        if (tract_data == undefined) {
+            d3.select("#infoBoxUnemploymentPercent").text("Missing data");
+            d3.select("#infoBoxMoePercent").text("Missing data");
+            d3.select("#infoBoxNumberOfSamples").text("Missing data");
+            d3.select("#infoBoxTotalSamples").text("Missing data");
+            d3.select("#infoBoxTractId").text(tractId);
+        } else {
+            let unemployment_percent = tract_data.unemployment_percent;
+            let margin_of_error = tract_data.margin_of_error_percent;
+            let num_samples = tract_data.unemployment_number;
+            let total_samples = tract_data.total_samples;
+
+            d3.select("#infoBoxUnemploymentPercent").text(unemployment_percent.toFixed(2) + "%");
+            d3.select("#infoBoxMoePercent").text(margin_of_error.toFixed(2) + "%");
+            d3.select("#infoBoxNumberOfSamples").text(num_samples);
+            d3.select("#infoBoxTotalSamples").text(total_samples);
+            d3.select("#infoBoxTractId").text(tractId);
+        }
     }
 
     /* TOGGLE ACTIVE TRACT */
