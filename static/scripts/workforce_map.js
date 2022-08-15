@@ -8,6 +8,11 @@ const CITY_CENTER = [-71.137140, 42.3513369];
 const INITIAL_SCALE = 150000;
 const LABEL_FONT_SIZE = 0.55;
 
+const MISSING_TRACTS = [ //  These are census tracts that are gone after 2020
+    "25025020303", "25025030300", "25025060600", "25025061000", "25025070800", "25025070101", "25025070200",
+    "25025081100", "25025081300", "25025110103", "25025070800", "25025000100", "25025000803", "25025000802"
+]
+
 /**
  * This class handles the WorkforceMap, including loading the data asynchronously, draw the map and the colorization,
  * update the infobox, and the click events.
@@ -360,6 +365,7 @@ const setHighlightTractAsNotActive = (tractShape) => {
 
 /* COLORIZING MAP FUNCTIONS */
 const colorizeWorkforceMap = (workforceData, cityTractShapes) => {
+    colorizeOldTracts();
     for (const key in workforceData.data ) {
         colorizeTract(key, workforceData.data[key], cityTractShapes);
     }
@@ -369,6 +375,13 @@ const colorizeTract = (tractId, tractData, cityTractShapes) => {
     if (tractId in cityTractShapes) {
         let tractShape = cityTractShapes[tractId];
         tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
+    }
+}
+
+const colorizeOldTracts = (cityTractShapes) => {
+    for (tractId in MISSING_TRACTS) {
+        let tractShape = cityTractShapes[tractId];
+        tractShape.attr("class", "tractUnemploymentLevelUnknown");
     }
 }
 
