@@ -369,8 +369,6 @@ const colorizeTract = (tractId, tractData, cityTractShapes) => {
     if (tractId in cityTractShapes) {
         let tractShape = cityTractShapes[tractId];
         tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
-    } else {
-        tractShape.attr("class", "tractUnemploymentLevelUnknown");
     }
 }
 
