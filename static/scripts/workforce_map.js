@@ -61,6 +61,7 @@ class WorkforceMap {
             .call(this.onZoom)
             .classed("svg-content", true);
         this.mapParentGroup = this.svgMap.append("g").attr("id", "mapParent");
+        let mapBgGroup = this.mapParentGroup.append("g").attr("id", "mapBgGroup");
         let mapShapeGroup = this.mapParentGroup.append("g").attr("id", "mapShapeGroup");
         let mapLabelGroup = this.mapParentGroup.append("g").attr("id", "mapLabelGroup");
         let mapHoverGroup = this.mapParentGroup.append("g").attr("id", "mapHoverGroup");
@@ -73,7 +74,7 @@ class WorkforceMap {
 
         // Draw map
         Promise.all(mapDataUriList).then((values) => {
-            drawSurroundings([values[2]], pathProjector, mapShapeGroup);
+            drawSurroundings([values[2]], pathProjector, mapBgGroup);
             this.cityTractShapes = drawCensusTracts(values[1], pathProjector, mapShapeGroup);
             this.neighborhoodShapes = drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
             this.cityTractHoverShapes = drawCensusHovers(values[1], pathProjector, this, mapHoverGroup);
@@ -232,6 +233,7 @@ const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
 }
 
 const drawTract = (tractFeature, projection, svg) => {
+    // console.log([tractFeature]);
     let tractShape = svg.append("path");
     tractShape.data([tractFeature])
         .join('path')
