@@ -68,7 +68,7 @@ class WorkforceMap {
 
         // Load data
         let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
-        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
+        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts_2010.geojson");
         let countySubdivisions = d3.json("static/maps/ma_county_subdivisions.geojson");
         let mapDataUriList = [bostonNeighborhoodsData, bostonCensusTractsData, countySubdivisions];
 

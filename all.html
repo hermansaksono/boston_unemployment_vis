@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="static/styles/main.css">
-    <link rel="icon" type="image/png" href="static/images/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="static/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon-16x16.png">
+    <link rel="stylesheet" type="text/css" href="./static/styles/main.css">
+    <link rel="icon" type="image/png" href="./static/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./static/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./static/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./static/images/favicon-16x16.png">
     <link rel="manifest" href="static/site.webmanifest">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Workforce Map</title>
@@ -29,6 +29,9 @@
                 <option value="all">all racial and ethnic groups</option>
                 <option value="white">white</option>
                 <option value="black" selected="selected">Black or African American</option>
+                <option value="aioan">American Indian or Alaska Native</option>
+                <option value="asian">Asian</option>
+                <option value="nhpi">Native Hawaiians and other Pacific Islanders</option>
                 <option value="latino">Latino or Hispanic</option>
             </select>
             <button id="buttonRefreshView">Refresh</button>
@@ -100,7 +103,7 @@
         </div>
     </main>
 
-    <script type="text/javascript" src="static/scripts/workforce_map.js"></script>
+    <script type="text/javascript" src="./static/scripts/workforce_map.js"></script>
     <script type="text/javascript">
         let workforceMap = new WorkforceMap("div#mapSvgContainer");
         workforceMap.initialize();
