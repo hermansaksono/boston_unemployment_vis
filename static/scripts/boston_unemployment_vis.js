@@ -43,7 +43,7 @@ let WorkforceMap = {
 
         // Load data
         let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
-        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts.geojson");
+        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts_2010.geojson");
         let cambridgeCensusTractsData = d3.json("static/maps/cambridge_census_tracts.geojson");
         let brooklineCensusTractsData = d3.json("static/maps/brookline_census_tracts.geojson");
         let countySubdivisions = d3.json("static/maps/ma_county_subdivisions.geojson");
