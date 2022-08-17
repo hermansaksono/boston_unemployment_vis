@@ -226,6 +226,11 @@ main {
             background-color: #7b1fa2;
         }
 
+        .colorLevelHighMoe {
+            background-color: #cccccc;
+            /* background-image: url("../images/stripe.svg"); */
+        }
+
 .svgMap {
     background-color: #ffffff;
 }
@@ -309,8 +314,10 @@ main {
 }
 
 .tractUnemploymentLevelUnknown {
-    stroke: #ffffff00;
-    fill: #aaaaaa;
+    fill-opacity: 0.6;
+    /* fill: url("../images/stripe.svg") #cccccc;
+    filter: drop-shadow(3px 5px 2px rgba(0 0 0 0.4));
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuXzBSdnRHRCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgd2lkdGg9IjUuNSIgaGVpZ2h0PSI1LjUiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxsaW5lIHgxPSIwIiB5PSIwIiB4Mj0iMCIgeTI9IjUuNSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPiA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm5fMFJ2dEdEKSIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+');*/
 }
 
 /* MOBILE VIEW */

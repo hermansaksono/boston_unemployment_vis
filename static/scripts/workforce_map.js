@@ -63,6 +63,7 @@ class WorkforceMap {
         this.mapParentGroup = this.svgMap.append("g").attr("id", "mapParent");
         let mapBgGroup = this.mapParentGroup.append("g").attr("id", "mapBgGroup");
         let mapShapeGroup = this.mapParentGroup.append("g").attr("id", "mapShapeGroup");
+        let mapNeighborhoodGroup = this.mapParentGroup.append("g").attr("id", "mapNeighborhoodGroup");
         let mapLabelGroup = this.mapParentGroup.append("g").attr("id", "mapLabelGroup");
         let mapHoverGroup = this.mapParentGroup.append("g").attr("id", "mapHoverGroup");
 
@@ -76,7 +77,7 @@ class WorkforceMap {
         Promise.all(mapDataUriList).then((values) => {
             drawSurroundings([values[2]], pathProjector, mapBgGroup);
             this.cityTractShapes = drawCensusTracts(values[1], pathProjector, mapShapeGroup);
-            this.neighborhoodShapes = drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
+            this.neighborhoodShapes = drawNeighborhoods(values[0], pathProjector, mapNeighborhoodGroup, mapLabelGroup);
             this.cityTractHoverShapes = drawCensusHovers(values[1], pathProjector, this, mapHoverGroup);
             this.loadWorkforceDataAndColorizeMap("static/json2020/unemployment-all-black.json");
         });
@@ -232,18 +233,13 @@ const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
     return cityTractShapes;
 }
 
-const drawTract = (tractFeature, projection, svg) => { // TODO Remove old comments
-    // console.log([tractFeature]);
-    //console.log(tractFeature.properties.GEOID20)
-    //console.log([tractFeature.geometry])
-    //console.log(projection)
+const drawTract = (tractFeature, projection, svg) => {
     let tractShape = svg.append("path");
     tractShape.data([tractFeature.geometry])
         .join('path')
         .attr('d', projection)
         .attr('class', "defaultTract")
         .attr("id", getTractId2020(tractFeature))
-    //console.log(tractShape)
     return tractShape;
 }
 
@@ -340,11 +336,9 @@ const drawCensusHovers = (tracts, projection, workforceMapObj, mapHoverGroup) =>
     return cityTractHoverShapes;
 }
 
-const drawTractHover = (tractFeature, projection, workforceMapObj, svg) => { // TODO Remove old comments
+const drawTractHover = (tractFeature, projection, workforceMapObj, svg) => {
     let tractShape = svg.append("path");
     let tractId = getTractId2020(tractFeature);
-    //console.log([tractFeature.geometry])
-    // tractShape.data([tractFeature])
     tractShape.data([tractFeature.geometry])
         .join('path')
         .attr('d', projection)
@@ -390,7 +384,12 @@ const colorizeWorkforceMap = (workforceData, cityTractShapes) => {
 const colorizeTract = (tractId, tractData, cityTractShapes) => {
     if (tractId in cityTractShapes) {
         let tractShape = cityTractShapes[tractId];
-        tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
+        let tractMoEClass = ""
+        //tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
+
+        if (tractData.margin_of_error_percent > 20)
+            tractMoEClass = " tractUnemploymentLevelUnknown"
+        tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent) + tractMoEClass);
     }
 }
 
