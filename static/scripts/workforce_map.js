@@ -7,6 +7,7 @@ const EXCLUDED_NEIGHBORHOOD_LABELS = ["Bay Village", "Leather District", "Chinat
 const CITY_CENTER = [-71.137140, 42.3513369];
 const INITIAL_SCALE = 150000;
 const LABEL_FONT_SIZE = 0.55;
+const MOE_THRESHOLD = 20;
 
 /**
  * This class handles the WorkforceMap, including loading the data asynchronously, draw the map and the colorization,
@@ -380,7 +381,7 @@ const colorizeTract = (tractId, tractData, cityTractShapes) => {
         let tractMoEClass = ""
         //tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
 
-        if (tractData.margin_of_error_percent > 20)
+        if (tractData.margin_of_error_percent > MOE_THRESHOLD)
             tractMoEClass = " tractUnemploymentLevelUnknown"
         tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent) + tractMoEClass);
     }
