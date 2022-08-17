@@ -154,6 +154,7 @@ main {
     }
 
         .mapInfoBox table tr.highMoE td {
+            background: url("../images/stripe-low.svg");
         }
 
         .mapInfoBox table tr.highMoE td#infoBoxMoePercent {
