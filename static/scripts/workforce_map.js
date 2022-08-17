@@ -68,7 +68,7 @@ class WorkforceMap {
 
         // Load data
         let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
-        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts_2010.geojson");
+        let bostonCensusTractsData = d3.json("static/maps/boston_census_tracts_2020.geojson");
         let countySubdivisions = d3.json("static/maps/ma_county_subdivisions.geojson");
         let mapDataUriList = [bostonNeighborhoodsData, bostonCensusTractsData, countySubdivisions];
 
@@ -226,24 +226,38 @@ const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the tract
         } else {
-            cityTractShapes[getTractId(tractFeature)] = drawTract(tractFeature, projection, mapShapeGroup);
+            cityTractShapes[getTractId2020(tractFeature)] = drawTract(tractFeature, projection, mapShapeGroup);
         }
     });
+
+    console.log(cityTractShapes);
     return cityTractShapes;
 }
 
-const drawTract = (tractFeature, projection, svg) => {
+const drawTract = (tractFeature, projection, svg) => { // TODO Remove old comments
     // console.log([tractFeature]);
+    //console.log(tractFeature.properties.GEOID20)
+    //console.log([tractFeature.geometry])
+    //console.log(projection)
     let tractShape = svg.append("path");
-    tractShape.data([tractFeature])
+    tractShape.data([tractFeature.geometry])
         .join('path')
         .attr('d', projection)
         .attr('class', "defaultTract")
-        .attr("id", getTractId(tractFeature))
+        .attr("id", getTractId2020(tractFeature))
+    //console.log(tractShape)
     return tractShape;
 }
 
-const getTractId = (tractFeature) => { return tractFeature.properties.GEOID10; }
+/*
+const getTractId = (tractFeature) => {
+    return tractFeature.properties.GEOID10;
+}
+ */
+
+const getTractId2020 = (tractFeature) => {
+    return tractFeature.properties.GEOID20;
+}
 
 const drawSurroundings = (surroundingsDataList, projection, mapShapeGroup) => {
     surroundingsDataList.forEach((surroundingsData) => {
@@ -321,22 +335,23 @@ const drawCensusHovers = (tracts, projection, workforceMapObj, mapHoverGroup) =>
         if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
             // Don't draw the census tract
         } else {
-            cityTractHoverShapes[getTractId(tractFeature)] = drawTractHover(
+            cityTractHoverShapes[getTractId2020(tractFeature)] = drawTractHover(
                 tractFeature, projection, workforceMapObj, mapHoverGroup);
         }
     });
     return cityTractHoverShapes;
 }
 
-const drawTractHover = (tractFeature, projection, workforceMapObj, svg) => {
+const drawTractHover = (tractFeature, projection, workforceMapObj, svg) => { // TODO Remove old comments
     let tractShape = svg.append("path");
-    let tractId = getTractId(tractFeature);
-
-    tractShape.data([tractFeature])
+    let tractId = getTractId2020(tractFeature);
+    //console.log([tractFeature.geometry])
+    // tractShape.data([tractFeature])
+    tractShape.data([tractFeature.geometry])
         .join('path')
         .attr('d', projection)
         .attr('class', "hoverTract")
-        .attr("id", getTractId(tractFeature))
+        .attr("id", getTractId2020(tractFeature))
         .on("mouseover", (d, i) => {
             setHighlightTractAsHover(tractShape);
         })
@@ -368,7 +383,7 @@ const setHighlightTractAsNotActive = (tractShape) => {
 
 /* COLORIZING MAP FUNCTIONS */
 const colorizeWorkforceMap = (workforceData, cityTractShapes) => {
-    colorizeOldTracts(cityTractShapes);
+    // colorizeOldTracts(cityTractShapes);
     for (const key in workforceData.data ) {
         colorizeTract(key, workforceData.data[key], cityTractShapes);
     }
