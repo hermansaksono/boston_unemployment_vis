@@ -15,7 +15,7 @@
 <body>
     <header>
         <section class="mapFilter">
-            <h1>Boston Workforce Map</h1>
+            <h1>Boston Workforce Map <span class="about"><a href="#" id="whatIsThisButton">What is this?</a></span></h1>
             <select id="selectDataType">
                 <option value="unemployment">Unemployment</option>
                 <option value="not_in_labor_force">Not participating in labor force</option>
@@ -38,6 +38,29 @@
         </section>
     </header>
     <main>
+        <div id="aboutBoxContainer" class="aboutBoxContainer">
+            <div class="aboutBox">
+                <h2>What is this?</h2>
+                <a href="#" id="aboutCloseButton" class="closeButton">Close</a>
+                <p>
+                    Action Boston for Community Development (ABCD) and Harvard CRCS researchers worked together to develop a visualization tool to identify and show unemployment among racial and ethnic groups. With 60 years of community action and neighborhood engagement in Boston, ABCD is interested in enhancing their workforce development and support programs for job seekers. More specifically, they see that innovative technologies will allow them to make strategic decisions in allocating resources including outreach efforts.
+                </p>
+                <p>
+                    Using a user-centered and iterative design approach, the ABCD and Harvard CRCS decided to develop a visualization tool that shows unemployment disparities in Boston at sub-neighborhood levels. This tool allows them to see parts of neighborhoods in the city where there is disproportionate unemployment among Black and Latino women and men.
+                </p>
+                <p>
+                    While this tool provides the insights required by ABCD to make strategic decisions, the CRCS team pointed out that the tool is also emphasizing the social injustice issues that continue to linger in Boston. The unemployment disparities are more pervasive within the neighborhoods where Black and Latino households live. Therefore, without more targeted interventions, these employment disparities constrain Black and Brown people from achieving economic mobility.
+                </p>
+                <p>Team:</p>
+                <ul>
+                    <li>Herman Saksono</li>
+                    <li>Ron Marlowe</li>
+                    <li>Hila Berstein</li>
+                    <li>Shahin Jabbari</li>
+                    <li>Joyce Tian</li>
+                </ul>
+            </div>
+        </div>
         <div id="mapContainer" class="mapContainer">
             <div class="mapOverlays">
                 <div id="mapZoomBox" class="mapZoomBox">

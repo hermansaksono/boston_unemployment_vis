@@ -108,6 +108,12 @@ class WorkforceMap {
         d3.select("#buttonZoomOut").on("click", () => {
             this.svgMap.transition().call(this.onZoom.scaleBy, 0.5);
         });
+
+        // What is this Button
+        d3.select("#whatIsThisButton").on("click", this.toggleAboutBox);
+
+        // About Box
+        d3.select("#aboutCloseButton").on("click", this.toggleAboutBox);
     }
 
     /* COLORIZING METHODS */
@@ -179,6 +185,16 @@ class WorkforceMap {
                 d3.select("#infoBoxMoePercentRow").classed("highMoE", false);
         }
     }
+
+    /* TOGGLE ABOUT BOX */
+    toggleAboutBox = () => {
+        let aboutBox = d3.select('#aboutBoxContainer');
+        console.log(aboutBox);
+        if (aboutBox.style("display") == "none")
+            aboutBox.style("display", "block");
+        else
+            aboutBox.style("display", "none");
+    };
 
     /* TOGGLE ACTIVE TRACT */
     setTractAsActive = (tractId) => {
