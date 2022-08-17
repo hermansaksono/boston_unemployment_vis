@@ -78,7 +78,7 @@ class WorkforceMap {
             this.cityTractShapes = drawCensusTracts(values[1], pathProjector, mapShapeGroup);
             this.neighborhoodShapes = drawNeighborhoods(values[0], pathProjector, mapShapeGroup, mapLabelGroup);
             this.cityTractHoverShapes = drawCensusHovers(values[1], pathProjector, this, mapHoverGroup);
-            this.loadWorkforceDataAndColorizeMap("static/json/unemployment-all-black.json");
+            this.loadWorkforceDataAndColorizeMap("static/json2020/unemployment-all-black.json");
         });
 
         /* EVENT HANDLING */
@@ -196,7 +196,7 @@ class WorkforceMap {
         let dataType = d3.select("#selectDataType").node().value;
         let gender = d3.select("#selectGender").node().value;
         let race = d3.select("#selectRacialGroup").node().value;
-        let pathString = `static/json/${dataType}-${gender}-${race}.json`;
+        let pathString = `static/json2020/${dataType}-${gender}-${race}.json`;
         this.loadWorkforceDataAndColorizeMap(pathString);
         d3.select("#buttonRefreshView").node().disabled = true;
     }
@@ -229,8 +229,6 @@ const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
             cityTractShapes[getTractId2020(tractFeature)] = drawTract(tractFeature, projection, mapShapeGroup);
         }
     });
-
-    console.log(cityTractShapes);
     return cityTractShapes;
 }
 
