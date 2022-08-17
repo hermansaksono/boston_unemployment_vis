@@ -17,6 +17,7 @@ class WorkforceMap {
     /* VARIABLES */
     cityTractWorkforceData = {};
     cityTractShapes = {};
+    cityTractMoEShapes = {};
     cityTractHoverShapes = {};
     neighborhoodShapes = {};
     activeTractId = undefined;
@@ -58,9 +59,23 @@ class WorkforceMap {
         this.mapParentGroup = this.svgMap.append("g").attr("id", "mapParent");
         let mapBgGroup = this.mapParentGroup.append("g").attr("id", "mapBgGroup");
         let mapShapeGroup = this.mapParentGroup.append("g").attr("id", "mapShapeGroup");
+        let mapMoEGroup = this.mapParentGroup.append("g").attr("id", "mapMoEGroup");
         let mapNeighborhoodGroup = this.mapParentGroup.append("g").attr("id", "mapNeighborhoodGroup");
         let mapLabelGroup = this.mapParentGroup.append("g").attr("id", "mapLabelGroup");
         let mapHoverGroup = this.mapParentGroup.append("g").attr("id", "mapHoverGroup");
+
+        // Initialize pattern
+        this.svgMap
+            .append('defs')
+            .append('pattern')
+                .attr('id', 'diagonalHatch')
+                .attr('patternUnits', 'userSpaceOnUse')
+                .attr('width', 4)
+                .attr('height', 4)
+            .append('path')
+                .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+                .attr('stroke', '#00000066')
+                .attr('stroke-width', 0.5);
 
         // Load data
         let bostonNeighborhoodsData = d3.json("static/maps/boston_neighborhoods.geojson");
@@ -72,6 +87,7 @@ class WorkforceMap {
         Promise.all(mapDataUriList).then((values) => {
             drawSurroundings([values[2]], pathProjector, mapBgGroup);
             this.cityTractShapes = drawCensusTracts(values[1], pathProjector, mapShapeGroup);
+            this.cityTractMoEShapes = drawMoETracts(values[1], pathProjector, mapMoEGroup)
             this.neighborhoodShapes = drawNeighborhoods(values[0], pathProjector, mapNeighborhoodGroup, mapLabelGroup);
             this.cityTractHoverShapes = drawCensusHovers(values[1], pathProjector, this, mapHoverGroup);
             this.loadWorkforceDataAndColorizeMap("static/json2020/unemployment-all-black.json");
@@ -99,7 +115,7 @@ class WorkforceMap {
         let workforceData = d3.json(dataUri);
         Promise.all([workforceData]).then( (values) => {
             this.cityTractWorkforceData = values[0];
-            colorizeWorkforceMap(values[0], this.cityTractShapes);
+            colorizeWorkforceMap(values[0], this.cityTractShapes, this.cityTractMoEShapes);
             if (this.activeTractId != undefined)
                 this.refreshInfoBoxData(this.activeTractId);
         });
@@ -138,18 +154,6 @@ class WorkforceMap {
     };
 
     refreshInfoBoxData = (tractId) => {
-        /*
-        let unemployment_percent = this.cityTractWorkforceData.data[tractId].unemployment_percent;
-        let margin_of_error = this.cityTractWorkforceData.data[tractId].margin_of_error_percent;
-        let num_samples = this.cityTractWorkforceData.data[tractId].unemployment_number;
-        let total_samples = this.cityTractWorkforceData.data[tractId].total_samples;
-
-        d3.select("#infoBoxUnemploymentPercent").text(unemployment_percent.toFixed(2) + "%");
-        d3.select("#infoBoxMoePercent").text(margin_of_error.toFixed(2) + "%");
-        d3.select("#infoBoxNumberOfSamples").text(num_samples);
-        d3.select("#infoBoxTotalSamples").text(total_samples);
-        d3.select("#infoBoxTractId").text(tractId);
-         */
         let tract_data = this.cityTractWorkforceData.data[tractId];
         if (tract_data == undefined) {
             d3.select("#infoBoxUnemploymentPercent").text("Missing data");
@@ -168,6 +172,11 @@ class WorkforceMap {
             d3.select("#infoBoxNumberOfSamples").text(num_samples);
             d3.select("#infoBoxTotalSamples").text(total_samples);
             d3.select("#infoBoxTractId").text(tractId);
+
+            if (margin_of_error > MOE_THRESHOLD)
+                d3.select("#infoBoxMoePercentRow").classed("highMoE", true);
+            else
+                d3.select("#infoBoxMoePercentRow").classed("highMoE", false);
         }
     }
 
@@ -234,6 +243,28 @@ const drawTract = (tractFeature, projection, svg) => {
         .join('path')
         .attr('d', projection)
         .attr('class', "defaultTract")
+        .attr("id", getTractId2020(tractFeature))
+    return tractShape;
+}
+
+const drawMoETracts = (tracts, projection, mapShapeGroup) => {
+    let cityTractShapes = {};
+    tracts.features.forEach((tractFeature) => {
+        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
+            // Don't draw the tract
+        } else {
+            cityTractShapes[getTractId2020(tractFeature)] = drawMoETract(tractFeature, projection, mapShapeGroup);
+        }
+    });
+    return cityTractShapes;
+}
+
+const drawMoETract = (tractFeature, projection, svg) => {
+    let tractShape = svg.append("path");
+    tractShape.data([tractFeature.geometry])
+        .join('path')
+        .attr('d', projection)
+        .attr('class', "tractUnemploymentLevelUnknown")
         .attr("id", getTractId2020(tractFeature))
     return tractShape;
 }
@@ -369,21 +400,24 @@ const setHighlightTractAsNotActive = (tractShape) => {
 }
 
 /* COLORIZING MAP FUNCTIONS */
-const colorizeWorkforceMap = (workforceData, cityTractShapes) => {
+const colorizeWorkforceMap = (workforceData, cityTractShapes, moeTractShapes) => {
     for (const key in workforceData.data ) {
-        colorizeTract(key, workforceData.data[key], cityTractShapes);
+        colorizeTract(key, workforceData.data[key], cityTractShapes, moeTractShapes);
     }
 }
 
-const colorizeTract = (tractId, tractData, cityTractShapes) => {
+const colorizeTract = (tractId, tractData, cityTractShapes, moeTractShapes) => {
     if (tractId in cityTractShapes) {
         let tractShape = cityTractShapes[tractId];
-        let tractMoEClass = ""
-        //tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
+        let moeTractShape = moeTractShapes[tractId];
 
-        if (tractData.margin_of_error_percent > MOE_THRESHOLD)
-            tractMoEClass = " tractUnemploymentLevelUnknown"
-        tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent) + tractMoEClass);
+        if (tractData.margin_of_error_percent > MOE_THRESHOLD) {
+            moeTractShape.attr("visibility", "visible");
+        } else {
+            moeTractShape.attr("visibility", "hidden");
+        }
+
+        tractShape.attr("class", "tractUnemploymentLevel" + getUnemploymentLevelId(tractData.unemployment_percent));
     }
 }
 
