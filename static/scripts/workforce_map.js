@@ -302,7 +302,7 @@ const isAboutBoxSet = () => {
 const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
     let cityTractShapes = {};
     tracts.features.forEach((tractFeature) => {
-        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
+        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID20)) {
             // Don't draw the tract
         } else {
             cityTractShapes[getTractId2020(tractFeature)] = drawTract(tractFeature, projection, mapShapeGroup);
@@ -324,7 +324,7 @@ const drawTract = (tractFeature, projection, svg) => {
 const drawMoETracts = (tracts, projection, mapShapeGroup) => {
     let cityTractShapes = {};
     tracts.features.forEach((tractFeature) => {
-        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
+        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID20)) {
             // Don't draw the tract
         } else {
             cityTractShapes[getTractId2020(tractFeature)] = drawMoETract(tractFeature, projection, mapShapeGroup);
@@ -426,7 +426,7 @@ const computeNeighborhoodLabelZoomed = (scale) => {
 const drawCensusHovers = (tracts, projection, workforceMapObj, mapHoverGroup) => {
     let cityTractHoverShapes = {};
     tracts.features.forEach((tractFeature) => {
-        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID10)) {
+        if (EXCLUDED_TRACTS.includes(tractFeature.properties.GEOID20)) {
             // Don't draw the census tract
         } else {
             cityTractHoverShapes[getTractId2020(tractFeature)] = drawTractHover(
