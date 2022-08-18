@@ -44,11 +44,12 @@ header {
         font-size: 0.8em;
         font-weight: normal !important;
         float: right;
-        margin: 0 1em 0 0;
+        margin: 0 1.2em 0 0;
     }
 
     header h1 .about a {
         color: #000000;
+        text-decoration: none;
     }
 
     header section.mapFilter {
