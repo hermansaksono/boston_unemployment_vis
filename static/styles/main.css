@@ -349,6 +349,10 @@ main {
     background: #ffffff55;
 }
 
+    .aboutBoxContainer.none {
+        display: none;
+    }
+
 .aboutBox {
     margin: 0 auto;
     width: 700px;
@@ -359,6 +363,10 @@ main {
 .aboutBox h2 {
     margin: 0;
     padding: 10px 20px 0 20px;
+}
+
+.aboutBox a {
+    color: #2962FF;
 }
 
 .aboutBox p {

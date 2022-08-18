@@ -8,6 +8,7 @@ const CITY_CENTER = [-71.137140, 42.3513369];
 const INITIAL_SCALE = 150000;
 const LABEL_FONT_SIZE = 0.55;
 const MOE_THRESHOLD = 20;
+const IS_SHOW_ABOUT_BOX = "isShowAboutBox";
 
 /**
  * This class handles the WorkforceMap, including loading the data asynchronously, draw the map and the colorization,
@@ -43,6 +44,7 @@ class WorkforceMap {
         /* INITIALIZATION */
         // Get document information then adjust mapContainerHeight
         let documentHeight = window.innerHeight;
+        this.aboutBox = d3.select('#aboutBoxContainer');
         this.mapContainer.style("height", `${documentHeight}px`);
 
         // Set up the projection
@@ -93,6 +95,9 @@ class WorkforceMap {
             this.loadWorkforceDataAndColorizeMap("static/json2020/unemployment-all-black.json");
         });
 
+        // Handle about box during initialization
+        initializeAboutBox(this.aboutBox);
+
         /* EVENT HANDLING */
         // Refresh Button
         d3.select("#buttonRefreshView").on("click", this.onRefreshButtonClicked);
@@ -109,11 +114,15 @@ class WorkforceMap {
             this.svgMap.transition().call(this.onZoom.scaleBy, 0.5);
         });
 
-        // What is this Button
-        d3.select("#whatIsThisButton").on("click", this.toggleAboutBox);
+        // ""What is this" Button
+        d3.select("#whatIsThisButton").on("click", () => {
+            toggleAboutBox(this.aboutBox);
+        });
 
         // About Box
-        d3.select("#aboutCloseButton").on("click", this.toggleAboutBox);
+        d3.select("#aboutCloseButton").on("click", () => {
+            toggleAboutBox(this.aboutBox);
+        });
     }
 
     /* COLORIZING METHODS */
@@ -188,12 +197,13 @@ class WorkforceMap {
 
     /* TOGGLE ABOUT BOX */
     toggleAboutBox = () => {
-        let aboutBox = d3.select('#aboutBoxContainer');
-        console.log(aboutBox);
-        if (aboutBox.style("display") == "none")
-            aboutBox.style("display", "block");
-        else
-            aboutBox.style("display", "none");
+        if (isAboutBoxVisible()) {
+            this.aboutBox.style("display", "none");
+            window.localStorage.setItem(IS_SHOW_ABOUT_BOX, "false");
+        } else {
+            this.aboutBox.style("display", "block");
+            window.localStorage.setItem(IS_SHOW_ABOUT_BOX, "true");
+        }
     };
 
     /* TOGGLE ACTIVE TRACT */
@@ -240,6 +250,54 @@ class WorkforceMap {
 }
 
 /* HELPER FUNCTIONS */
+/* About box functions */
+const initializeAboutBox = (aboutBox) => {
+    if (isAboutBoxSet()) {
+        if (isAboutBoxVisible()) {
+            aboutBox.style("display", "block");
+        } else {
+            aboutBox.style("display", "none");
+        }
+    } else {
+        aboutBox.style("display", "block");
+        window.localStorage.setItem(IS_SHOW_ABOUT_BOX, "true");
+    }
+}
+
+const isAboutBoxVisible = () => {
+    if (isAboutBoxSet())
+        if (window.localStorage.getItem(IS_SHOW_ABOUT_BOX) == "false")
+            return false;
+        else
+            return true;
+    else {
+        return false;
+    }
+}
+
+const toggleAboutBox = (aboutBox) => {
+    // console.log(isAboutBoxVisible());
+    if (isAboutBoxVisible()) {
+        setAboutBoxVisible(aboutBox, false);
+        window.localStorage.setItem(IS_SHOW_ABOUT_BOX, "false");
+    } else {
+        setAboutBoxVisible(aboutBox, true);
+        window.localStorage.setItem(IS_SHOW_ABOUT_BOX, "true");
+    }
+};
+
+const setAboutBoxVisible = (aboutBox, isVisible) => {
+    if (isVisible) {
+        aboutBox.style("display", "block");
+    } else {
+        aboutBox.style("display", "none");
+    }
+}
+
+const isAboutBoxSet = () => {
+    return(window.localStorage.getItem(IS_SHOW_ABOUT_BOX) != null);
+}
+
 /* Drawing Functions */
 const drawCensusTracts = (tracts, projection, mapShapeGroup) => {
     let cityTractShapes = {};
