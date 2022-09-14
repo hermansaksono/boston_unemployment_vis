@@ -8,7 +8,7 @@ Action Boston for Community Development (ABCD) and Harvard Center for Research i
 Using a user-centered and iterative design approach, the ABCD and Harvard CRCS developed a visualization tool that shows unemployment disparities in Boston at sub-neighborhood levels. This tool allows them to identify parts of the neighborhoods where there is disproportionate unemployment among Black and Latino women and men.
 
 ## Contributors
-* Herman Saksono, Harvard University
+* Herman Saksono (h.saksono@northeastern.edu), Northeastern University and Harvard University
 * Ron Marlow, ABCD
 * Hila Bernstein, Harvard University
 * Miranda Popkey, ABCD
