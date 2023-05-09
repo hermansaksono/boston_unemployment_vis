@@ -35,23 +35,23 @@
     <meta name="twitter:domain" content="hermansaksono.github.io">
 
     <!--CSS-->
-    <link href="static/styles/index.css" media="all" rel="stylesheet" type="text/css">
+    <link href="./static/styles/index.css" media="all" rel="stylesheet" type="text/css">
 
     <!--FAVICON HERE-->
-    <link rel="apple-touch-icon" sizes="57x57" href="static/images/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="static/images/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="static/images/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="static/images/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="static/images/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="static/images/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="static/images/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="static/images/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="static/images/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="static/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon/favicon-16x16.png">
-    <link rel="manifest" href="static/images/favicon/manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="./static/images/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./static/images/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./static/images/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./static/images/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./static/images/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./static/images/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./static/images/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./static/images/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./static/images/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="./static/images/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./static/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./static/images/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./static/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="./static/images/favicon/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="msapplication-TileImage" content="/static/images/img/favicon-144x144.png">
@@ -62,8 +62,109 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 </head>
 <body>
+    <header>
+        <section class="mapFilter">
+            <h1>Boston Unemployment Map <span class="about"><a href="#" id="whatIsThisButton">What is this?</a></span></h1>
+            <select id="selectDataType">
+                <option value="unemployment">Unemployment</option>
+                <option value="not_in_labor_force">Not participating in labor force</option>
+            </select>
+            <select id="selectGender">
+                <option value="all">all genders</option>
+                <option value="women">women</option>
+                <option value="men">men</option>
+            </select>
+            <select id="selectRacialGroup">
+                <option value="all">all racial and ethnic groups</option>
+                <option value="white">white</option>
+                <option value="black" selected="selected">Black or African American</option>
+                <option value="aioan">American Indian or Alaska Native</option>
+                <option value="asian">Asian</option>
+                <option value="nhpi">Native Hawaiians and other Pacific Islanders</option>
+                <option value="latino">Latino or Hispanic</option>
+            </select>
+            <button id="buttonRefreshView">Refresh</button>
+        </section>
+    </header>
     <div id="map"></div>
-
+    <div id="aboutBoxContainer" class="aboutBoxContainer none">
+        <div class="aboutBox">
+            <h2>What is this?</h2>
+            <a href="#" id="aboutCloseButton" class="closeButton">Close</a>
+            <p>
+                This map shows unemployment disparities among racial and ethnic groups in Boston neighborhoods. As you explore this map, you will see that social injustice issues continue to linger in Boston. In the neighborhoods where Black and Latino households live, unemployment disparities are disproportionately more pervasive. Without prioritizing interventions for these communities, employment disparities will keep constraining Black and Brown people from achieving economic mobility.</p>
+            <p>
+                <a href="https://bostonabcd.org/">Action Boston for Community Development (ABCD)</a> and <a href="https://crcs.seas.harvard.edu/">Harvard Center for Research in Computation and Society (CRCS)</a> worked together to develop this interactive unemployment map. With 60 years of community action and neighborhood engagement in Boston, ABCD is interested in enhancing their workforce development and support programs for job seekers. They see that innovative technologies will allow them to make strategic decisions in allocating resources including outreach efforts.
+            </p>
+            <p>
+                Using a user-centered and iterative design approach, the ABCD and Harvard CRCS developed a visualization tool that shows unemployment disparities in Boston at sub-neighborhood levels. This tool allows them to identify parts of the neighborhoods where there is disproportionate unemployment among Black and Latino women and men.
+            </p>
+            <p><b>Team</b>:</p>
+            <ul>
+                <li>Herman Saksono, Harvard University</li>
+                <li>Ron Marlow, ABCD</li>
+                <li>Hila Bernstein, Harvard University</li>
+                <li>Miranda Popkey, ABCD</li>
+                <li>Shahin Jabbari, Harvard University</li>
+                <li>Joyce Tian, Harvard</li>
+            </ul>
+        </div>
+    </div>
+    <div id="mapContainer" class="mapContainer">
+        <div class="mapOverlays">
+            <div id="mapLegend2" class="mapLegend">
+                <div class="legendItem">
+                    <div class="legendBox colorLevel0"></div> Less than 5%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevel1"></div> 5-8%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevel2"></div> 9-14%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevel3"></div> 15-19%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevel4"></div> 20-29%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevel5"></div> More than 30%
+                </div>
+                <div class="legendItem">
+                    <div class="legendBox colorLevelHighMoe"></div> MoE > 20%
+                </div>
+            </div>
+            <div id="mapGuideText" class="mapGuideText">
+                <p>Click on the neighborhoods to see the workforce data.</p>
+            </div>
+            <div id="mapInfoBox" class="mapInfoBox hidden">
+                <table>
+                    <tr class="big">
+                        <td>Unemployment level &nbsp;</td>
+                        <td id="infoBoxUnemploymentPercent"></td>
+                    </tr>
+                    <tr id="infoBoxMoePercentRow">
+                        <td>Margin of error</td>
+                        <td id="infoBoxMoePercent"></td>
+                    </tr>
+                    <tr>
+                        <td>Number of samples</td>
+                        <td id="infoBoxNumberOfSamples"></td>
+                    </tr>
+                    <tr>
+                        <td>Total samples</td>
+                        <td id="infoBoxTotalSamples"></td>
+                    </tr>
+                    <tr>
+                        <td>Census tract</td>
+                        <td id="infoBoxTractId"></td>
+                    </tr>
+                </table>
+                <div class="sourceCitation">Source: U.S. Census Bureau; <br />American Community Survey, 2020, 5-year estimates</div>
+            </div>
+        </div>
+    </div>
     <!--
       The `defer` attribute causes the callback to execute after the full HTML
       document has been parsed. For non-blocking uses, avoiding race conditions,
@@ -71,7 +172,8 @@
       See https://developers.google.com/maps/documentation/javascript/load-maps-js-api
       for more information.
       -->
-    <script crossorigin src="static/scripts/index.js" type="module"></script>
-    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxsANEDYxlYYydY02alIh07SqIbVuP8WQ&callback=initMap&v=beta"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxsANEDYxlYYydY02alIh07SqIbVuP8WQ&callback=initMap&v=beta"></script>
+    <script crossorigin src="./static/scripts/index.js" type="module"></script>
 </body>
 </html>
