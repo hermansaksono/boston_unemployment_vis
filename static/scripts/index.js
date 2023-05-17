@@ -6,7 +6,7 @@
  * @constant {Array} EXCLUDED_NEIGHBORHOODS - Neighborhoods to be excluded
  * @constant {Array} EXCLUDED_NEIGHBORHOOD_LABELS - Neighborhood labels to be excluded
  */
-const CITY_CENTER = [42.3513369, -71.137140];
+const CITY_CENTER = [42.33, -71.1];
 const UNEMPLOYMENT_LEVEL_CATEGORIES = [4, 8, 14, 19, 29];
 const EXCLUDED_TRACTS = ['25025990101', '25025980101', '25025981501'];
 // const EXCLUDED_NEIGHBORHOODS = ['Harbor Islands'];
