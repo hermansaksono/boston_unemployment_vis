@@ -1,19 +1,19 @@
 const CITY_CENTER = [42.3513369, -71.137140];
 const UNEMPLOYMENT_LEVEL_CATEGORIES = [4, 8, 14, 19, 29];
-const EXCLUDED_TRACTS = ["25025990101", "25025980101", "25025981501"];
-const EXCLUDED_NEIGHBORHOODS = ["Harbor Islands"];
-const EXCLUDED_NEIGHBORHOOD_LABELS = ["Bay Village", "Leather District", "Chinatown", "Waterfront",
-                                      "West End"];
+const EXCLUDED_TRACTS = ['25025990101', '25025980101', '25025981501'];
+const EXCLUDED_NEIGHBORHOODS = ['Harbor Islands'];
+const EXCLUDED_NEIGHBORHOOD_LABELS = ['Bay Village', 'Leather District', 'Chinatown', 'Waterfront',
+                                      'West End'];
 const COLOR_MAPPINGS = {
-    colorLevel0: "#f9fbe7",
-    colorLevel1: "#fff59d",
-    colorLevel2: "#ffb74d",
-    colorLevel3: "#ef5350",
-    colorLevel4: "#d81b60",
-    colorLevel5: "#7b1fa2",
+    colorLevel0: '#f9fbe7',
+    colorLevel1: '#fff59d',
+    colorLevel2: '#ffb74d',
+    colorLevel3: '#ef5350',
+    colorLevel4: '#d81b60',
+    colorLevel5: '#7b1fa2',
 };
 const MOE_THRESHOLD = 20;
-const IS_SHOW_ABOUT_BOX = "isShowAboutBox";
+const IS_SHOW_ABOUT_BOX = 'isShowAboutBox';
 
 let map;
 let tractsDataLayer;
@@ -27,8 +27,8 @@ let mapInfobox;
 let aboutBox;
 
 function initMap() {
-    mapInfobox = document.getElementById("mapInfoBox");
-    aboutBox = document.getElementById("aboutBoxContainer");
+    mapInfobox = document.getElementById('mapInfoBox');
+    aboutBox = document.getElementById('aboutBoxContainer');
 
     loadMapData();
     initializeAboutBox();
@@ -36,62 +36,52 @@ function initMap() {
 }
 
 function loadMapData() {
-    const bostonNeighborhoodsData = "static/maps/boston_neighborhoods.geojson";
-    const bostonCensusTractsData = "static/maps/boston_census_tracts_2020.geojson";
-    const countySubdivisions = "static/maps/ma_county_subdivisions.geojson";
+    const bostonNeighborhoodsData = 'static/maps/boston_neighborhoods.geojson';
+    const bostonCensusTractsData = 'static/maps/boston_census_tracts_2020.geojson';
+    const countySubdivisions = 'static/maps/ma_county_subdivisions.geojson';
     const mapDataUriList = [bostonNeighborhoodsData, bostonCensusTractsData, countySubdivisions];
 
     const latlng = new google.maps.LatLng(CITY_CENTER[0], CITY_CENTER[1]);
     const myOptions = {
         zoom: 12, center: latlng, disableDefaultUI: true,
     };
-    map = new google.maps.Map(document.getElementById("map"), myOptions);
+    map = new google.maps.Map(document.getElementById('map'), myOptions);
 
     Promise.all(mapDataUriList)
         .then((values) => {
-            cityTractShapes = drawCensusTracts(values[1]);
             neighborhoodShapes = drawNeighborhoods(values[0]);
-            return loadWorkforceData("static/json2020/unemployment-all-black.json");
+            return drawCensusTracts(values[1]);
         })
-        .then((data) => {
-            cityTractWorkforceData = data;
-            unemploymentData = data.data;
-            colorizeWorkforceMap();
+        .then(() => {
+            onRefreshButtonClicked();
         })
         .catch((error) => {
-            console.error("Error loading map data:", error);
+            console.error('Error loading map data:', error);
         });
 }
 
 function drawCensusTracts(GeoJsonUrl) {
-    tractsDataLayer = new google.maps.Data({map: map});
-    tractsDataLayer.loadGeoJson(GeoJsonUrl);
-
-    tractsDataLayer.addListener("mouseover", setHighlightTractAsHover);
-    tractsDataLayer.addListener("mouseout", setHighlightTractAsDefault);
-    tractsDataLayer.addListener("click", onTractClicked);
-
-    tractsDataLayer.addListener("addfeature", (event) => {
-        const tractFeature = event.feature;
-        const tractId = getTractId(tractFeature);
-
-        if (!EXCLUDED_TRACTS.includes(tractId)) {
-            cityTractShapes[tractId] = drawTract(tractsDataLayer, tractFeature);
-        }
+    return new Promise((resolve, reject) => {
+        tractsDataLayer = new google.maps.Data({map: map});
+        tractsDataLayer.loadGeoJson(GeoJsonUrl, {}, (features) => {
+            tractsDataLayer.addListener('mouseover', (event) => {
+                highlightTract(event.feature, 2);
+            });
+            tractsDataLayer.addListener('mouseout', setHighlightTractAsDefault);
+            tractsDataLayer.addListener('click', onTractClicked);
+            features.forEach((tractFeature) => {
+                const tractId = getTractId(tractFeature);
+                if (!EXCLUDED_TRACTS.includes(tractId)) {
+                    cityTractShapes[tractId] = tractFeature;
+                }
+            });
+            resolve();
+        });
     });
-
-    return cityTractShapes;
-}
-
-function drawTract(tractsDataLayer, tractFeature) {
-    tractsDataLayer.overrideStyle(tractFeature, {
-        fillColor: "#ffffff", fillOpacity: 0.0, strokeWeight: 0.4, strokeColor: "#989393",
-    });
-    return tractFeature;
 }
 
 function getTractId(tractFeature) {
-    return tractFeature.getProperty("GEOID20");
+    return tractFeature.getProperty('GEOID20');
 }
 
 function drawNeighborhoods(GeoJsonUrl) {
@@ -99,7 +89,7 @@ function drawNeighborhoods(GeoJsonUrl) {
     neighborhoodsDataLayer.loadGeoJson(GeoJsonUrl);
     const neighborhoodShapes = {};
 
-    neighborhoodsDataLayer.addListener("addfeature", (event) => {
+    neighborhoodsDataLayer.addListener('addfeature', (event) => {
         const neighborhoodFeature = event.feature;
         const neighborhoodName = getNeighborhoodName(neighborhoodFeature);
 
@@ -113,7 +103,7 @@ function drawNeighborhoods(GeoJsonUrl) {
 }
 
 function getNeighborhoodName(neighborhoodFeature) {
-    return neighborhoodFeature.getProperty("Name");
+    return neighborhoodFeature.getProperty('Name');
 }
 
 function drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName) {
@@ -121,10 +111,10 @@ function drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName) {
         console.log(neighborhoodName);
     } else {
         neighborhoodsDataLayer.overrideStyle(neighborhoodFeature, {
-            fillColor: "#ffffff",
+            fillColor: '#ffffff',
             fillOpacity: 0.0,
             strokeWeight: 1.5,
-            strokeColor: "#4589ff",
+            strokeColor: '#4589ff',
             clickable: false,
         });
     }
@@ -135,21 +125,21 @@ function loadWorkforceData(dataUri) {
     return fetch(dataUri)
         .then((response) => response.json())
         .catch((error) => {
-            console.error("Error loading workforce data:", error);
+            console.error('Error loading workforce data:', error);
         });
 }
 
 function colorizeWorkforceMap() {
     tractsDataLayer.setStyle((feature) => {
-        const geoid20 = feature.getProperty("GEOID20");
+        const geoid20 = feature.getProperty('GEOID20');
         const unemployment = unemploymentData[geoid20]?.unemployment_percent || 0;
         const level = getUnemploymentLevelId(unemployment);
 
         return {
-            fillColor: getLevelColor(level),
+            fillColor: getColorForLevel(level),
             fillOpacity: 0.4,
             strokeWeight: 0.4,
-            strokeColor: "#989393",
+            strokeColor: '#4d4b4b',
         };
     });
 }
@@ -166,13 +156,13 @@ function getUnemploymentLevelId(unemploymentPercent) {
     return level;
 }
 
-function getLevelColor(level) {
-    return COLOR_MAPPINGS[`colorLevel${level}`] || "#ffffff";
+function getColorForLevel(level) {
+    return COLOR_MAPPINGS[`colorLevel${level}`] || '#ffffff';
 }
 
 function initializeAboutBox() {
     const isAboutBoxSet = window.localStorage.getItem(IS_SHOW_ABOUT_BOX) != null;
-    const isVisible = isAboutBoxSet ? window.localStorage.getItem(IS_SHOW_ABOUT_BOX) !== "false"
+    const isVisible = isAboutBoxSet ? window.localStorage.getItem(IS_SHOW_ABOUT_BOX) !== 'false'
                                     : true;
 
     setAboutBoxVisible(isVisible);
@@ -187,14 +177,14 @@ function toggleAboutBox() {
 
 function isAboutBoxVisible() {
     if (isAboutBoxSet()) {
-        return window.localStorage.getItem(IS_SHOW_ABOUT_BOX) !== "false";
+        return window.localStorage.getItem(IS_SHOW_ABOUT_BOX) !== 'false';
     } else {
         return false;
     }
 }
 
 function setAboutBoxVisible(isVisible) {
-    aboutBox.style.display = isVisible ? "block" : "none";
+    aboutBox.style.display = isVisible ? 'block' : 'none';
 }
 
 function isAboutBoxSet() {
@@ -202,18 +192,18 @@ function isAboutBoxSet() {
 }
 
 function initializeEventListeners() {
-    document.getElementById("whatIsThisButton").addEventListener("click", toggleAboutBox);
-    document.getElementById("aboutCloseButton").addEventListener("click", toggleAboutBox);
-    document.getElementById("buttonRefreshView").addEventListener("click", onRefreshButtonClicked);
-    document.getElementById("selectDataType").addEventListener("change", onDataFilterChanged);
-    document.getElementById("selectGender").addEventListener("change", onDataFilterChanged);
-    document.getElementById("selectRacialGroup").addEventListener("change", onDataFilterChanged);
+    document.getElementById('whatIsThisButton').addEventListener('click', toggleAboutBox);
+    document.getElementById('aboutCloseButton').addEventListener('click', toggleAboutBox);
+    document.getElementById('buttonRefreshView').addEventListener('click', onRefreshButtonClicked);
+    document.getElementById('selectDataType').addEventListener('change', onDataFilterChanged);
+    document.getElementById('selectGender').addEventListener('change', onDataFilterChanged);
+    document.getElementById('selectRacialGroup').addEventListener('change', onDataFilterChanged);
 }
 
 function onRefreshButtonClicked() {
-    const dataType = document.getElementById("selectDataType").value;
-    const gender = document.getElementById("selectGender").value;
-    const race = document.getElementById("selectRacialGroup").value;
+    const dataType = document.getElementById('selectDataType').value;
+    const gender = document.getElementById('selectGender').value;
+    const race = document.getElementById('selectRacialGroup').value;
     const pathString = `static/json2020/${dataType}-${gender}-${race}.json`;
 
     loadWorkforceData(pathString)
@@ -225,21 +215,21 @@ function onRefreshButtonClicked() {
                 refreshInfoBoxData(activeTractId);
         })
         .catch((error) => {
-            console.error("Error loading workforce data:", error);
+            console.error('Error loading workforce data:', error);
         });
 
-    document.getElementById("buttonRefreshView").disabled = true;
+    document.getElementById('buttonRefreshView').disabled = true;
 }
 
 function onDataFilterChanged() {
-    document.getElementById("buttonRefreshView").disabled = false;
+    document.getElementById('buttonRefreshView').disabled = false;
 }
 
 function onTractClicked(event) {
-    const tractId = event.feature.getProperty("GEOID20");
+    const tractId = event.feature.getProperty('GEOID20');
     if (activeTractId === undefined) {
         activeTractId = tractId;
-        setTractAsActive(event.feature);
+        highlightTract(event.feature, 5);
         showInfoBox(tractId);
         hideGuideText();
     } else {
@@ -251,7 +241,7 @@ function onTractClicked(event) {
         } else {
             setTractAsNotActive(cityTractShapes[activeTractId]);
             activeTractId = tractId;
-            setTractAsActive(event.feature);
+            highlightTract(event.feature, 5);
             showInfoBox(tractId);
             hideGuideText();
         }
@@ -260,55 +250,55 @@ function onTractClicked(event) {
 
 function showInfoBox(tractId) {
     refreshInfoBoxData(tractId);
-    mapInfobox.className = "mapInfoBox visible";
+    mapInfobox.className = 'mapInfoBox visible';
 }
 
 function hideInfoBox() {
-    mapInfobox.className = "mapInfoBox hidden";
+    mapInfobox.className = 'mapInfoBox hidden';
 }
 
 function refreshInfoBoxData(tractId) {
     const tractData = cityTractWorkforceData.data[tractId];
 
     if (tractData === undefined) {
-        document.getElementById("infoBoxUnemploymentPercent").textContent = "Missing data";
-        document.getElementById("infoBoxMoePercent").textContent = "Missing data";
-        document.getElementById("infoBoxNumberOfSamples").textContent = "Missing data";
-        document.getElementById("infoBoxTotalSamples").textContent = "Missing data";
-        document.getElementById("infoBoxTractId").textContent = tractId;
+        document.getElementById('infoBoxUnemploymentPercent').textContent = 'Missing data';
+        document.getElementById('infoBoxMoePercent').textContent = 'Missing data';
+        document.getElementById('infoBoxNumberOfSamples').textContent = 'Missing data';
+        document.getElementById('infoBoxTotalSamples').textContent = 'Missing data';
+        document.getElementById('infoBoxTractId').textContent = tractId;
     } else {
         const unemploymentPercent = tractData.unemployment_percent;
         const marginOfError = tractData.margin_of_error_percent;
         const numSamples = tractData.unemployment_number;
         const totalSamples = tractData.total_samples;
 
-        document.getElementById("infoBoxUnemploymentPercent").textContent =
-            unemploymentPercent.toFixed(2) + "%";
-        document.getElementById("infoBoxMoePercent").textContent = marginOfError.toFixed(2) + "%";
-        document.getElementById("infoBoxNumberOfSamples").textContent = numSamples;
-        document.getElementById("infoBoxTotalSamples").textContent = totalSamples;
-        document.getElementById("infoBoxTractId").textContent = tractId;
+        document.getElementById('infoBoxUnemploymentPercent').textContent =
+            unemploymentPercent.toFixed(2) + '%';
+        document.getElementById('infoBoxMoePercent').textContent = marginOfError.toFixed(2) + '%';
+        document.getElementById('infoBoxNumberOfSamples').textContent = numSamples;
+        document.getElementById('infoBoxTotalSamples').textContent = totalSamples;
+        document.getElementById('infoBoxTractId').textContent = tractId;
 
-        const infoBoxMoePercentRow = document.getElementById("infoBoxMoePercentRow");
+        const infoBoxMoePercentRow = document.getElementById('infoBoxMoePercentRow');
         if (marginOfError > MOE_THRESHOLD) {
-            infoBoxMoePercentRow.classList.add("highMoE");
+            infoBoxMoePercentRow.classList.add('highMoE');
         } else {
-            infoBoxMoePercentRow.classList.remove("highMoE");
+            infoBoxMoePercentRow.classList.remove('highMoE');
         }
     }
 }
 
 function hideGuideText() {
-    document.getElementById("mapGuideText").classList.add("hidden");
+    document.getElementById('mapGuideText').classList.add('hidden');
 }
 
 function showGuideText() {
-    document.getElementById("mapGuideText").classList.remove("hidden");
+    document.getElementById('mapGuideText').classList.remove('hidden');
 }
 
-function setHighlightTractAsHover(event) {
-    tractsDataLayer.overrideStyle(event.feature, {
-        fillOpacity: 1,
+function highlightTract(tractFeature, highlightWeight) {
+    tractsDataLayer.overrideStyle(tractFeature, {
+        strokeWeight: highlightWeight,
     });
 }
 
@@ -319,14 +309,8 @@ function setHighlightTractAsDefault(event) {
     }
 }
 
-function setTractAsActive(tractShape) {
-    tractsDataLayer.overrideStyle(tractShape, {
-        fillOpacity: 1, strokeWeight: 2, strokeColor: "#4d4b4b",
-    });
-}
-
-function setTractAsNotActive(tractShape) {
-    tractsDataLayer.revertStyle(tractShape);
+function setTractAsNotActive(tractFeature) {
+    tractsDataLayer.revertStyle(tractFeature);
 }
 
 window.initMap = initMap;
