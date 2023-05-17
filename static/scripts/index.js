@@ -85,7 +85,7 @@ function drawCensusTracts(GeoJsonUrl) {
 
 function drawTract(tractsDataLayer, tractFeature) {
     tractsDataLayer.overrideStyle(tractFeature, {
-        fillColor: "#ffffff", fillOpacity: 0.0, strokeWeight: 0.4, strokeColor: "#cb3e3e",
+        fillColor: "#ffffff", fillOpacity: 0.0, strokeWeight: 0.4, strokeColor: "#989393",
     });
     return tractFeature;
 }
@@ -148,7 +148,7 @@ function colorizeWorkforceMap() {
         return {
             fillColor: getLevelColor(level),
             fillOpacity: 0.4,
-            strokeWeight: 1,
+            strokeWeight: 0.4,
             strokeColor: "#989393",
         };
     });
@@ -221,13 +221,13 @@ function onRefreshButtonClicked() {
             cityTractWorkforceData = data;
             unemploymentData = data.data;
             colorizeWorkforceMap();
+            if (activeTractId !== undefined)
+                refreshInfoBoxData(activeTractId);
         })
         .catch((error) => {
             console.error("Error loading workforce data:", error);
         });
 
-    if (activeTractId !== undefined)
-        refreshInfoBoxData(activeTractId);
     document.getElementById("buttonRefreshView").disabled = true;
 }
 
@@ -237,22 +237,21 @@ function onDataFilterChanged() {
 
 function onTractClicked(event) {
     const tractId = event.feature.getProperty("GEOID20");
-
     if (activeTractId === undefined) {
         activeTractId = tractId;
-        setTractAsActive(tractId);
+        setTractAsActive(event.feature);
         showInfoBox(tractId);
         hideGuideText();
     } else {
         if (activeTractId === tractId) {
             activeTractId = undefined;
-            setTractAsNotActive(tractId);
+            setTractAsNotActive(event.feature);
             hideInfoBox(tractId);
             showGuideText();
         } else {
-            setTractAsNotActive(activeTractId);
-            setTractAsActive(tractId);
+            setTractAsNotActive(cityTractShapes[activeTractId]);
             activeTractId = tractId;
+            setTractAsActive(event.feature);
             showInfoBox(tractId);
             hideGuideText();
         }
@@ -299,16 +298,6 @@ function refreshInfoBoxData(tractId) {
     }
 }
 
-function setTractAsActive(tractId) {
-    const tractHoverShape = tractsDataLayer.getFeatureById(tractId);
-    setHighlightTractAsActive(tractHoverShape);
-}
-
-function setTractAsNotActive(tractId) {
-    const tractHoverShape = tractsDataLayer.getFeatureById(tractId);
-    setHighlightTractAsNotActive(tractHoverShape);
-}
-
 function hideGuideText() {
     document.getElementById("mapGuideText").classList.add("hidden");
 }
@@ -320,22 +309,24 @@ function showGuideText() {
 function setHighlightTractAsHover(event) {
     tractsDataLayer.overrideStyle(event.feature, {
         fillOpacity: 1,
-        // strokeWeight: 2, strokeColor: "#00ff15",
     });
 }
 
 function setHighlightTractAsDefault(event) {
-    tractsDataLayer.revertStyle();
+    const tractId = getTractId(event.feature);
+    if (tractId !== activeTractId) {
+        tractsDataLayer.revertStyle(event.feature);
+    }
 }
 
-function setHighlightTractAsActive(tractShape) {
+function setTractAsActive(tractShape) {
     tractsDataLayer.overrideStyle(tractShape, {
-        strokeWeight: 2, strokeColor: "#00ff15",
+        fillOpacity: 1, strokeWeight: 2, strokeColor: "#4d4b4b",
     });
 }
 
-function setHighlightTractAsNotActive(tractShape) {
-    tractsDataLayer.revertStyle();
+function setTractAsNotActive(tractShape) {
+    tractsDataLayer.revertStyle(tractShape);
 }
 
 window.initMap = initMap;
