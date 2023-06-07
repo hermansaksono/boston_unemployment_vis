@@ -162,7 +162,7 @@ main {
     height: 200px;
     position: absolute;
     right: 0;
-    margin: -220px 60px 0px 0px;
+    margin: -220px 20px 0px 0px;
     background-color: #ffffffcc;
     border: 1px solid #222222;
     z-index: 1;
@@ -212,7 +212,7 @@ main {
 .mapGuideText {
     width: 330px;
     height: 150px;
-    margin: -200px 60px 40px 0px;
+    margin: -200px 20px 40px 0px;
     position: absolute;
     right: 0;
     z-index: 1;

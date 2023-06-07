@@ -83,6 +83,9 @@ function loadMapData() {
     const latlng = new google.maps.LatLng(CITY_CENTER[0], CITY_CENTER[1]);
     const myOptions = {
         zoom: 12, center: latlng, disableDefaultUI: true, zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
     };
     map = new google.maps.Map(document.getElementById('map'), myOptions);
 
