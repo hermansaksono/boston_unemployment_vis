@@ -138,17 +138,20 @@ main {
 
 .mapLegend {
     width: 200px;
-    margin: -200px 20px 0 20px;
+    margin: -200px 10px 30px 10px;
     padding: 10px;
     position: absolute;
     left: 0;
+    bottom: 0;
     z-index: 10;
     user-select: none;
     background-color: #ffffff99;
 }
+
 .mapLegend .legendItem {
     margin: 0.25em 1.5em 0.25em 0;
 }
+
 .mapLegend .legendItem .legendBox {
     height: 1em;
     width: 1em;
@@ -162,7 +165,8 @@ main {
     height: 200px;
     position: absolute;
     right: 0;
-    margin: -220px 20px 0px 0px;
+    bottom: 0;
+    margin: 0px 10px 20px 0px;
     background-color: #ffffffcc;
     border: 1px solid #222222;
     z-index: 1;
@@ -210,11 +214,12 @@ main {
 }
 
 .mapGuideText {
-    width: 330px;
-    height: 150px;
-    margin: -200px 20px 40px 0px;
+    width: 350px;
+    height: 200px;
+    margin: 0px 10px 20px 0px;
     position: absolute;
     right: 0;
+    bottom: 0;
     z-index: 1;
     font-size: 1.5em;
     color: #666666;
