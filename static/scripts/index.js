@@ -10,7 +10,7 @@ const CITY_CENTER = [42.33, -71.1];
 const UNEMPLOYMENT_LEVEL_CATEGORIES = [4, 8, 14, 19, 29];
 const EXCLUDED_TRACTS = ['25025990101', '25025980101', '25025981501'];
 // const EXCLUDED_NEIGHBORHOODS = ['Harbor Islands'];
-const EXCLUDED_NEIGHBORHOODS = [];
+const EXCLUDED_NEIGHBORHOODS = ['Harbor Islands'];
 const EXCLUDED_NEIGHBORHOOD_LABELS = ['Bay Village', 'Leather District', 'Chinatown', 'Waterfront',
                                       'West End'];
 
@@ -150,10 +150,8 @@ function drawNeighborhoods(GeoJsonUrl) {
         const neighborhoodFeature = event.feature;
         const neighborhoodName = getNeighborhoodName(neighborhoodFeature);
 
-        if (!EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
-            neighborhoodShapes[neighborhoodName] =
-                drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName);
-        }
+        neighborhoodShapes[neighborhoodName] =
+          drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName);
     });
 
     return neighborhoodShapes;
@@ -176,7 +174,11 @@ function getNeighborhoodName(neighborhoodFeature) {
  */
 function drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName) {
     if (EXCLUDED_NEIGHBORHOODS.includes(neighborhoodName)) {
-        console.log(neighborhoodName);
+        neighborhoodsDataLayer.overrideStyle(neighborhoodFeature, {
+            fillOpacity: 0.0,
+            strokeWeight: 0.0,
+            clickable: false,
+        });
     } else {
         neighborhoodsDataLayer.overrideStyle(neighborhoodFeature, {
             fillColor: '#ffffff',
