@@ -219,6 +219,7 @@ function drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName) {
             fillOpacity: 0.0,
             strokeWeight: 0.0,
             clickable: false,
+            zIndex: 5
         });
     } else {
         neighborhoodsDataLayer.overrideStyle(neighborhoodFeature, {
