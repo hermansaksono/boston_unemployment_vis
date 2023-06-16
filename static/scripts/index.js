@@ -39,8 +39,10 @@ const IS_SHOW_ABOUT_BOX = 'isShowAboutBox';
  * Variables to hold various map layers, data, and UI components
  * @property {google.maps.Map} map - The Google Maps object
  * @property {Object} tractsDataLayer - The data layer for the census tracts
+ * @property {Object} tractsDataLayer - The data layer for the census tracts hover events
  * @property {Object} neighborhoodsDataLayer - The data layer for the neighborhoods
  * @property {Object} cityTractShapes - The shapes of the census tracts
+ * @property {Object} cityTractHoverShapes - The shapes of the census tracts hover events
  * @property {Object} neighborhoodShapes - The shapes of the neighborhoods
  * @property {Object} cityTractWorkforceData - The workforce data for the city's census tracts
  * @property {Object} unemploymentData - The unemployment data for the city's census tracts
@@ -50,8 +52,10 @@ const IS_SHOW_ABOUT_BOX = 'isShowAboutBox';
  */
 let map;
 let tractsDataLayer;
+let tractsHoverDataLayer;
 let neighborhoodsDataLayer;
 let cityTractShapes = {};
+let cityTractHoverShapes = {};
 let neighborhoodShapes = {};
 let cityTractWorkforceData = {};
 let unemploymentData = null;
@@ -91,8 +95,10 @@ function loadMapData() {
 
     Promise.all(mapDataUriList)
         .then((values) => {
+            drawCensusTracts(values[1]);
             neighborhoodShapes = drawNeighborhoods(values[0]);
-            return drawCensusTracts(values[1]);
+            drawCensusHoverTracts(values[1]);
+            return true;
         })
         .then(() => {
             onRefreshButtonClicked();
@@ -111,17 +117,52 @@ function drawCensusTracts(GeoJsonUrl) {
     return new Promise((resolve) => {
         tractsDataLayer = new google.maps.Data({map: map});
         tractsDataLayer.loadGeoJson(GeoJsonUrl, {}, (features) => {
-            tractsDataLayer.addListener('mouseover', (event) => {
-                highlightTract(event.feature, 2);
-            });
-            tractsDataLayer.addListener('mouseout', setHighlightTractAsDefault);
-            tractsDataLayer.addListener('click', onTractClicked);
             features.forEach((tractFeature) => {
                 const tractId = getTractId(tractFeature);
                 if (!EXCLUDED_TRACTS.includes(tractId)) {
                     cityTractShapes[tractId] = tractFeature;
                 }
             });
+        });
+    });
+}
+
+/**
+ * Draws the census hover tracts on the map
+ * @param {string} GeoJsonUrl - URL for the GeoJSON data of census tracts
+ * @returns {Promise} Promise object represents the completion of drawing census tracts
+ */
+function drawCensusHoverTracts(GeoJsonUrl) {
+    return new Promise((resolve) => {
+        tractsHoverDataLayer = new google.maps.Data({map: map});
+        tractsHoverDataLayer.loadGeoJson(GeoJsonUrl, {}, (features) => {
+            tractsHoverDataLayer.addListener('mouseover', (event) => {
+                highlightTract(event.feature, 2);
+            });
+            tractsHoverDataLayer.addListener('mouseout', setHighlightTractAsDefault);
+            tractsHoverDataLayer.addListener('click', onTractClicked);
+
+            tractsHoverDataLayer.setStyle((feature) => {
+              return {
+                  fillOpacity: 0.0,
+                  strokeWeight: 0.4,
+                  strokeOpacity: 1.0,
+                  strokeColor: '#4d4b4b',
+                  zIndex: 10,
+                };
+            });
+
+            features.forEach((tractFeature) => {
+                const tractId = getTractId(tractFeature);
+                if (EXCLUDED_TRACTS.includes(tractId)) {
+                    cityTractHoverShapes[tractId] = tractFeature;
+                    tractsHoverDataLayer.overrideStyle(tractFeature, {
+                      fillOpacity: 0.0,
+                      strokeWeight: 0.0,
+                    });
+                }
+            });
+
             resolve();
         });
     });
@@ -216,8 +257,10 @@ function colorizeWorkforceMap() {
         return {
             fillColor: getColorForLevel(level),
             fillOpacity: 0.4,
-            strokeWeight: 0.4,
-            strokeColor: '#4d4b4b',
+            strokeWeight: 0.0,
+            strokeOpacity: 0.0,
+            //strokeColor: '#4d4b4b',
+            clickable: false,
         };
     });
 }
@@ -359,7 +402,7 @@ function onTractClicked(event) {
             hideInfoBox(tractId);
             showGuideText();
         } else {
-            setTractAsNotActive(cityTractShapes[activeTractId]);
+            setTractAsNotActive(cityTractHoverShapes[activeTractId]);
             activeTractId = tractId;
             highlightTract(event.feature, 5);
             showInfoBox(tractId);
@@ -439,7 +482,7 @@ function showGuideText() {
  * @param {number} highlightWeight - The strokeWeight to highlight the tract
  */
 function highlightTract(tractFeature, highlightWeight) {
-    tractsDataLayer.overrideStyle(tractFeature, {
+    tractsHoverDataLayer.overrideStyle(tractFeature, {
         strokeWeight: highlightWeight,
     });
 }
@@ -451,7 +494,7 @@ function highlightTract(tractFeature, highlightWeight) {
 function setHighlightTractAsDefault(event) {
     const tractId = getTractId(event.feature);
     if (tractId !== activeTractId) {
-        tractsDataLayer.revertStyle(event.feature);
+        tractsHoverDataLayer.revertStyle(event.feature);
     }
 }
 
@@ -460,7 +503,10 @@ function setHighlightTractAsDefault(event) {
  * @param {google.maps.Data.Feature} tractFeature - The feature object of the tract
  */
 function setTractAsNotActive(tractFeature) {
-    tractsDataLayer.revertStyle(tractFeature);
+    tractsHoverDataLayer.revertStyle(tractFeature);
+    tractsHoverDataLayer.overrideStyle(tractFeature, {
+        strokeWeight: 0.4,
+    });
 }
 
 window.initMap = initMap;
