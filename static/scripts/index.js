@@ -86,7 +86,10 @@ function loadMapData() {
 
     const latlng = new google.maps.LatLng(CITY_CENTER[0], CITY_CENTER[1]);
     const myOptions = {
-        zoom: 12, center: latlng, disableDefaultUI: true, zoomControl: true,
+      zoom: 12,
+      center: latlng,
+      disableDefaultUI: true,
+      zoomControl: true,
       zoomControlOptions: {
         position: google.maps.ControlPosition.RIGHT_CENTER,
       },
@@ -145,7 +148,7 @@ function drawCensusHoverTracts(GeoJsonUrl) {
             tractsHoverDataLayer.setStyle((feature) => {
               return {
                   fillOpacity: 0.0,
-                  strokeWeight: 0.4,
+                  strokeWeight: 0.0,
                   strokeOpacity: 1.0,
                   strokeColor: '#4d4b4b',
                   zIndex: 10,
@@ -228,6 +231,7 @@ function drawNeighborhoodBorders(neighborhoodFeature, neighborhoodName) {
             strokeWeight: 1.5,
             strokeColor: '#4589ff',
             clickable: false,
+            zIndex: 5
         });
     }
     return neighborhoodFeature;
@@ -258,9 +262,9 @@ function colorizeWorkforceMap() {
         return {
             fillColor: getColorForLevel(level),
             fillOpacity: 0.4,
-            strokeWeight: 0.0,
-            strokeOpacity: 0.0,
-            //strokeColor: '#4d4b4b',
+            strokeWeight: 0.4,
+            strokeOpacity: 0.9,
+            strokeColor: '#4d4b4b',
             clickable: false,
         };
     });
@@ -491,7 +495,7 @@ function highlightTract(tractFeature, highlightWeight) {
       });
     } else if (activeTractId === tractId) {
       tractsHoverDataLayer.overrideStyle(tractFeature, {
-          strokeWeight: 5,
+          strokeWeight: highlightWeight,
       });
     } else {
       tractsHoverDataLayer.overrideStyle(tractFeature, {
