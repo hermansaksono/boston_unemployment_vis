@@ -483,9 +483,21 @@ function showGuideText() {
  * @param {number} highlightWeight - The strokeWeight to highlight the tract
  */
 function highlightTract(tractFeature, highlightWeight) {
-    tractsHoverDataLayer.overrideStyle(tractFeature, {
-        strokeWeight: highlightWeight,
-    });
+    const tractId = getTractId(tractFeature);
+
+    if (activeTractId === undefined) {
+      tractsHoverDataLayer.overrideStyle(tractFeature, {
+          strokeWeight: highlightWeight,
+      });
+    } else if (activeTractId === tractId) {
+      tractsHoverDataLayer.overrideStyle(tractFeature, {
+          strokeWeight: 5,
+      });
+    } else {
+      tractsHoverDataLayer.overrideStyle(tractFeature, {
+          strokeWeight: highlightWeight,
+      });
+    }
 }
 
 /**
